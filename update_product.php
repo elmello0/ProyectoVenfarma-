@@ -1,4 +1,6 @@
-<!-- Este script PHP gestiona la actualización de datos de productos en una base de datos.
+
+<?php
+/*<!-- Este script PHP gestiona la actualización de datos de productos en una base de datos.
      - Configura el registro de errores de PHP para guardarlos en un archivo específico.
      - Establece los detalles de conexión a la base de datos.
      - Establece el tipo de contenido como JSON para la respuesta HTTP.
@@ -10,8 +12,8 @@
      - Si la actualización es exitosa, confirma la transacción y consulta el producto actualizado para devolverlo en la respuesta.
      - Si no se actualiza ningún registro, revierte la transacción.
      - Captura y maneja cualquier excepción PDO, revirtiendo la transacción y devolviendo un mensaje de error.
-     - Cierra la conexión a la base de datos al final del script. -->
-<?php
+     - Cierra la conexión a la base de datos al final del script. -->*/
+
 // Configuración de reporte de errores
 ini_set('log_errors', 1);
 ini_set('error_log', 'C:\xampp\htdocs\VENFARMA\errores.log');

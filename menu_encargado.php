@@ -1,8 +1,11 @@
-<!-- Este código PHP se encarga de la gestión de sesiones y control de acceso.
+
+<?php
+
+
+/*<!-- Este código PHP se encarga de la gestión de sesiones y control de acceso.
      - Empieza con session_start() para iniciar o continuar una sesión.
      - Verifica si el usuario está logueado comprobando si 'id' existe en $_SESSION.
-     - Si no está logueado (no existe 'id'), redirige a 'login.php' y detiene el script con exit(). -->
-<?php
+     - Si no está logueado (no existe 'id'), redirige a 'login.php' y detiene el script con exit(). -->*/
 // Inicio o reanudo la sesión.
 session_start();
 // Verifico si el usuario está logueado. Si no, lo redirijo a la página de login.

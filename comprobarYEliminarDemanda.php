@@ -1,6 +1,7 @@
-<!-- El código proporcionado es un script PHP que maneja una solicitud POST para eliminar una demanda de
-una base de datos. -->
+
 <?php
+/*<!-- El código proporcionado es un script PHP que maneja una solicitud POST para eliminar una demanda de
+una base de datos. -->*/
 $servername = "localhost";
 $username = "root";
 $password = "";

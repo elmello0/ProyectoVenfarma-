@@ -1,6 +1,8 @@
-<!-- El código es un script PHP que maneja la descarga de un archivo PDF. Aquí hay un desglose de lo que
-hace: -->
+
 <?php
+/*<!-- El código es un script PHP que maneja la descarga de un archivo PDF. Aquí hay un desglose de lo que
+hace: -->*/
+
 // descargar_pdf.php
 
 // Asumiendo que tienes una sesión iniciada y que en ella se almacena el ID del usuario

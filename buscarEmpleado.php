@@ -1,6 +1,8 @@
-<!-- Este código PHP realiza una consulta a la base de datos para buscar empleados según un término de
-búsqueda. -->
+
 <?php
+/*<!-- Este código PHP realiza una consulta a la base de datos para buscar empleados según un término de
+búsqueda. -->*/
+
 $servername = "localhost";
 $username = "root";
 $password = "";

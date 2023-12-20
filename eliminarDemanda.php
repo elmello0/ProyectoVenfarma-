@@ -1,6 +1,8 @@
-<!-- El código proporcionado es un script PHP que maneja una solicitud POST para eliminar un registro de
-una tabla de base de datos. Aquí hay un desglose de lo que hace el código: -->
+
 <?php
+/*<!-- El código proporcionado es un script PHP que maneja una solicitud POST para eliminar un registro de
+una tabla de base de datos. Aquí hay un desglose de lo que hace el código: -->*/
+
 // Incluyo el archivo de conexión a la base de datos.
 include 'conexion.php';
 

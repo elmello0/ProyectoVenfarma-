@@ -1,7 +1,9 @@
-<!-- El código que proporcionó es un script PHP que se conecta a una base de datos MySQL y recupera
-categorías de una tabla llamada "categoría". Luego convierte los datos recuperados al formato JSON y
-los repite como respuesta. -->
+
 <?php
+/* <!-- El código que proporcionó es un script PHP que se conecta a una base de datos MySQL y recupera
+categorías de una tabla llamada "categoría". Luego convierte los datos recuperados al formato JSON y
+los repite como respuesta*/ 
+
 
 // Datos de conexión a la base de datos
 $servername = "localhost";

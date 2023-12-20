@@ -1,6 +1,9 @@
-<!-- El código que proporcionaste es un script PHP que actualiza la descripción de una demanda en una
-base de datos MySQL. Aquí hay un desglose de lo que hace el código:-->
+
 <?php
+
+/*<!-- El código que proporcionaste es un script PHP que actualiza la descripción de una demanda en una
+base de datos MySQL. Aquí hay un desglose de lo que hace el código:-->*/
+
 // editar_desc_demanda.php
 
 // Datos de conexión a la base de datos

@@ -1,10 +1,13 @@
-<!-- Este fragmento de código PHP se utiliza para manejar sesiones de usuario y control de acceso.
+
+<?php
+
+/*<!-- Este fragmento de código PHP se utiliza para manejar sesiones de usuario y control de acceso.
      - Comienza con session_start(), que inicia o reanuda una sesión existente. Esta función es crucial para trabajar con cualquier dato almacenado en las variables de sesión.
      - A continuación, verifica si el usuario actual está autenticado. Esto se realiza mediante la comprobación de la existencia de 'id' en la variable de sesión $_SESSION.
      - Si 'id' no está presente en la sesión (indicando que el usuario no está logueado), el script redirige al usuario a 'login.php'. Esto se logra mediante la función header(), que envía una cabecera HTTP de redirección.
      - Finalmente, el script llama a exit() para terminar su ejecución inmediatamente después de la redirección. Esto previene la ejecución de cualquier código adicional en caso de que el usuario no esté autenticado.
-     - Este patrón es común en aplicaciones web para asegurar que ciertas páginas o recursos solo sean accesibles por usuarios autenticados. -->
-<?php
+     - Este patrón es común en aplicaciones web para asegurar que ciertas páginas o recursos solo sean accesibles por usuarios autenticados. -->*/
+
 // Inicio o reanudo la sesión.
 session_start();
 // Verifico si el usuario está logueado. Si no, lo redirijo a la página de login.

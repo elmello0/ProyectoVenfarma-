@@ -1,9 +1,13 @@
-<!-- Este código  inicia una sesión para verificar la autenticación del usuario. Si el usuario no está autenticado,
-lo redirige a la página de inicio de sesión. Luego, incluye un archivo de conexión a la base de datos y configura la visualización de errores
-para facilitar la depuración. Realiza una consulta a la base de datos para obtener el historial de registros
-y muestra un mensaje de error si la consulta falla. -->
+
 
 <?php
+
+
+/*<!-- Este código  inicia una sesión para verificar la autenticación del usuario. Si el usuario no está autenticado,
+lo redirige a la página de inicio de sesión. Luego, incluye un archivo de conexión a la base de datos y configura la visualización de errores
+para facilitar la depuración. Realiza una consulta a la base de datos para obtener el historial de registros
+y muestra un mensaje de error si la consulta falla. -->*/
+
 
 session_start();
 

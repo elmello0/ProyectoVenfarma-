@@ -1,3 +1,5 @@
 {
-    "docwriter.language": "Spanish"
+    "docwriter.language": "Spanish",
+    "docify.commentService.autoTranslationService": "Spanish",
+    "docify.translateService.targetLanguage": "Spanish"
 }

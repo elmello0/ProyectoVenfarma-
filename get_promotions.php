@@ -1,6 +1,11 @@
-<!-- Este es un script PHP que se conecta a una base de datos MySQL y recupera datos de una tabla llamada
-"promoción". Luego codifica los datos recuperados en formato JSON y los genera. -->
+
 <?php
+
+
+
+/*<!-- Este es un script PHP que se conecta a una base de datos MySQL y recupera datos de una tabla llamada
+"promoción". Luego codifica los datos recuperados en formato JSON y los genera. -->*/
+
 
 // Datos de conexión a la base de datos
 $servername = "localhost";

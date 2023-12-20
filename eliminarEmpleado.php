@@ -1,6 +1,9 @@
-<!-- El código es un script PHP que se conecta a una base de datos MySQL y elimina un registro de
-empleado según la identificación del empleado proporcionada. -->
+
 <?php
+
+/**<!-- El código es un script PHP que se conecta a una base de datos MySQL y elimina un registro de
+empleado según la identificación del empleado proporcionada. -->*/ 
+
 $servername = "localhost";
 $username = "root";
 $password = "";

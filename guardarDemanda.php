@@ -1,4 +1,8 @@
-<!-- Este script PHP maneja la inserción de demandas en una base de datos.
+
+<?php
+
+
+/*<!-- Este script PHP maneja la inserción de demandas en una base de datos.
      - Comprueba si la solicitud es POST, y si lo es:
        - Establece las credenciales de conexión a la base de datos.
        - Recoge los datos de la demanda enviados a través del formulario (nombre, fecha, descripción, estado, cantidad).
@@ -6,8 +10,9 @@
        - En caso de éxito, envía una respuesta JSON indicando que la demanda fue agregada.
        - Si hay un error de conexión, captura la excepción y envía un mensaje de error.
      - Si la solicitud no es POST, envía un mensaje de error indicando que el método de solicitud no es válido.
-     - Cierra la conexión a la base de datos al final del proceso. -->
-<?php
+     - Cierra la conexión a la base de datos al final del proceso. --> */
+
+
 // Verifico si la solicitud es de tipo POST.
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 

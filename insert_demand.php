@@ -1,11 +1,14 @@
-<!-- Este script PHP es para insertar demandas en una base de datos.
+
+<?php
+
+/*<!-- Este script PHP es para insertar demandas en una base de datos.
      - Configura las credenciales de conexión a la base de datos y establece una conexión utilizando PDO.
      - Activa el manejo de excepciones para errores de PDO.
      - Prepara una consulta SQL para insertar una nueva demanda en la tabla 'demanda' con datos proporcionados por POST.
      - Ejecuta la consulta y, en caso de éxito, muestra un mensaje confirmando la adición de la demanda.
      - Captura y muestra cualquier error de PDO durante la conexión o ejecución de la consulta.
-     - Cierra la conexión a la base de datos al final del proceso. -->
-<?php
+     - Cierra la conexión a la base de datos al final del proceso. -->*/ 
+     
 // Configuro las credenciales para conectarme a la base de datos.
 $servername = "localhost";
 $username = "root";

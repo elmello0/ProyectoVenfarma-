@@ -1,4 +1,8 @@
-<!-- Este script PHP se centra en obtener y procesar datos para un gráfico.
+
+<?php
+
+
+ /*<!-- Este script PHP se centra en obtener y procesar datos para un gráfico.
      - Comienza incluyendo 'conexion.php' para la conexión a la base de datos.
      - Prepara una consulta SQL que suma y agrupa cantidades de demanda por nombre.
      - Inicializa un arreglo, $datosParaGrafico, para almacenar los datos del gráfico.
@@ -8,8 +12,8 @@
        - Libera los recursos del resultado al finalizar.
      - En caso de error en la consulta, se prepara un mensaje de error para el gráfico.
      - Cierra la conexión con la base de datos.
-     - Finalmente, envía los datos en formato JSON para su uso en la visualización del gráfico. -->
-<?php
+     - Finalmente, envía los datos en formato JSON para su uso en la visualización del gráfico. */
+     
 // Incluyo el archivo de conexión a la base de datos.
 include 'conexion.php';
 

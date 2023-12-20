@@ -1,0 +1,50 @@
+[07-Dec-2023 06:16:09 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[08-Dec-2023 03:16:09 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[08-Dec-2023 03:16:09 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type bool in C:\xampp\htdocs\VENFARMA\update_product.php on line 40
+[08-Dec-2023 03:16:09 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type bool in C:\xampp\htdocs\VENFARMA\update_product.php on line 41
+[08-Dec-2023 03:16:09 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type bool in C:\xampp\htdocs\VENFARMA\update_product.php on line 42
+[08-Dec-2023 03:16:09 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type bool in C:\xampp\htdocs\VENFARMA\update_product.php on line 43
+[08-Dec-2023 03:16:18 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[08-Dec-2023 03:16:18 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type bool in C:\xampp\htdocs\VENFARMA\update_product.php on line 40
+[08-Dec-2023 03:16:18 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type bool in C:\xampp\htdocs\VENFARMA\update_product.php on line 41
+[08-Dec-2023 03:16:18 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type bool in C:\xampp\htdocs\VENFARMA\update_product.php on line 42
+[08-Dec-2023 03:16:18 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type bool in C:\xampp\htdocs\VENFARMA\update_product.php on line 43
+[08-Dec-2023 03:19:16 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[08-Dec-2023 06:44:10 Europe/Berlin] PHP Warning:  Undefined array key "categoria_idcategoria" in C:\xampp\htdocs\VENFARMA\update_product.php on line 25
+[08-Dec-2023 06:44:10 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[08-Dec-2023 06:49:13 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[08-Dec-2023 07:43:22 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[08-Dec-2023 23:25:34 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[09-Dec-2023 01:35:52 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[09-Dec-2023 03:55:16 Europe/Berlin] PHP Warning:  Undefined array key "estado" in C:\xampp\htdocs\VENFARMA\update_product.php on line 23
+[09-Dec-2023 03:55:27 Europe/Berlin] PHP Warning:  Undefined array key "estado" in C:\xampp\htdocs\VENFARMA\update_product.php on line 23
+[09-Dec-2023 03:55:59 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[09-Dec-2023 03:56:18 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[09-Dec-2023 03:56:40 Europe/Berlin] PHP Warning:  Undefined array key "demanda_iddemanda" in C:\xampp\htdocs\VENFARMA\update_product.php on line 28
+[09-Dec-2023 04:24:36 Europe/Berlin] PHP Warning:  Undefined array key "estado" in C:\xampp\htdocs\VENFARMA\update_product.php on line 33
+[09-Dec-2023 04:24:45 Europe/Berlin] PHP Warning:  Undefined array key "estado" in C:\xampp\htdocs\VENFARMA\update_product.php on line 33
+[09-Dec-2023 04:24:57 Europe/Berlin] PHP Warning:  Undefined array key "estado" in C:\xampp\htdocs\VENFARMA\update_product.php on line 33
+[09-Dec-2023 04:25:09 Europe/Berlin] PHP Warning:  Undefined array key "estado" in C:\xampp\htdocs\VENFARMA\update_product.php on line 33
+[09-Dec-2023 04:25:11 Europe/Berlin] PHP Warning:  Undefined array key "estado" in C:\xampp\htdocs\VENFARMA\update_product.php on line 33
+[09-Dec-2023 04:25:34 Europe/Berlin] PHP Warning:  Undefined array key "estado" in C:\xampp\htdocs\VENFARMA\update_product.php on line 33
+[09-Dec-2023 04:25:43 Europe/Berlin] PHP Warning:  Undefined array key "estado" in C:\xampp\htdocs\VENFARMA\update_product.php on line 33
+[09-Dec-2023 06:02:24 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: There is no active transaction in C:\xampp\htdocs\VENFARMA\update_product.php:87
+Stack trace:
+#0 C:\xampp\htdocs\VENFARMA\update_product.php(87): PDO->rollBack()
+#1 {main}
+  thrown in C:\xampp\htdocs\VENFARMA\update_product.php on line 87
+[09-Dec-2023 06:04:48 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: There is no active transaction in C:\xampp\htdocs\VENFARMA\update_product.php:89
+Stack trace:
+#0 C:\xampp\htdocs\VENFARMA\update_product.php(89): PDO->rollBack()
+#1 {main}
+  thrown in C:\xampp\htdocs\VENFARMA\update_product.php on line 89
+[09-Dec-2023 06:04:54 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: There is no active transaction in C:\xampp\htdocs\VENFARMA\update_product.php:89
+Stack trace:
+#0 C:\xampp\htdocs\VENFARMA\update_product.php(89): PDO->rollBack()
+#1 {main}
+  thrown in C:\xampp\htdocs\VENFARMA\update_product.php on line 89
+[09-Dec-2023 06:05:01 Europe/Berlin] PHP Fatal error:  Uncaught PDOException: There is no active transaction in C:\xampp\htdocs\VENFARMA\update_product.php:89
+Stack trace:
+#0 C:\xampp\htdocs\VENFARMA\update_product.php(89): PDO->rollBack()
+#1 {main}
+  thrown in C:\xampp\htdocs\VENFARMA\update_product.php on line 89

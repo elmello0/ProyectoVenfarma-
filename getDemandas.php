@@ -1,9 +1,11 @@
-<!--Este código   es un script PHP que se conecta a una base de datos MySQL y recupera datos de una
+
+<?php
+/*<!--Este código   es un script PHP que se conecta a una base de datos MySQL y recupera datos de una
 tabla llamada "demanda". Luego procesa los datos para crear una matriz adecuada para generar un
 gráfico utilizando Google Charts. El script convierte la matriz al formato JSON y la almacena en la
 variable . Si hay un error en la conexión de la base de datos, se almacena un
-mensaje de error en . Finalmente, se cierra la conexión a la base de datos. -->
-<?php
+mensaje de error en . Finalmente, se cierra la conexión a la base de datos. -->*/
+
 // Datos de conexión a la base de datos
 $servername = "localhost";
 $username = "root";

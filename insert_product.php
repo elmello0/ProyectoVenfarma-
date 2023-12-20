@@ -1,11 +1,13 @@
-<!-- Este script PHP inserta un nuevo producto en una base de datos.
+
+<?php
+
+/* <!-- Este script PHP inserta un nuevo producto en una base de datos.
      - Establece la conexión a la base de datos con PDO y configura el manejo de errores a excepción.
      - Recoge los datos del producto del formulario (nombre, stock, precio, estado, etc.) con manejo de valores por defecto.
      - Prepara una consulta SQL para insertar el producto en la tabla 'producto', vinculando los parámetros correspondientes.
      - Ejecuta la consulta y, si es exitosa, devuelve una respuesta JSON indicando el éxito de la operación.
      - En caso de error, captura la excepción y devuelve un mensaje de error en formato JSON.
-     - Cierra la conexión a la base de datos al finalizar el proceso. -->
-<?php
+     - Cierra la conexión a la base de datos al finalizar el proceso. -->*/
 
 $servername = "localhost";
 $username = "root";

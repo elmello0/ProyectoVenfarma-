@@ -1,6 +1,8 @@
-<!-- El código que proporcionó es un script PHP que recupera datos de una base de datos MySQL y los
-devuelve en formato JSON. Aquí hay un desglose de lo que hace el código: -->
+
 <?php
+
+/*<!-- El código que proporcionó es un script PHP que recupera datos de una base de datos MySQL y los
+devuelve en formato JSON. Aquí hay un desglose de lo que hace el código: -->*/
 
 $servername = "localhost";
 $username = "root";

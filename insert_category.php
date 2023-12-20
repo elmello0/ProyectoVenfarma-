@@ -1,11 +1,13 @@
-<!-- Este script PHP se encarga de insertar nuevas categorías en una base de datos.
+
+<?php
+
+/* <!-- Este script PHP se encarga de insertar nuevas categorías en una base de datos.
      - Establece los detalles de conexión a la base de datos (servidor, nombre de usuario, contraseña, nombre de la base de datos).
      - Intenta conectarse a la base de datos usando PDO y establece el modo de error para manejar excepciones.
      - Prepara una sentencia SQL para insertar una nueva categoría con los datos recibidos por POST (nombre y descripción de la categoría).
      - Ejecuta la sentencia y, en caso de éxito, muestra un mensaje indicando que la categoría se añadió correctamente.
      - Captura y muestra cualquier error de PDO en caso de fallo en la conexión o en la consulta.
-     - Cierra la conexión a la base de datos al final del script. -->
-<?php
+     - Cierra la conexión a la base de datos al final del script. -->*/
 
 // Datos de conexión a la base de datos
 $servername = "localhost";

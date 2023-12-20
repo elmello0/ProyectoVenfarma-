@@ -1,4 +1,6 @@
-<!-- Este script PHP actualiza una promoción en una base de datos.
+<?php
+
+/*<!-- Este script PHP actualiza una promoción en una base de datos.
      - Establece los detalles de conexión a la base de datos.
      - Recoge datos de una promoción desde un formulario.
      - Utiliza PDO para una conexión segura a la base de datos.
@@ -6,8 +8,7 @@
      - Los datos se pasan a la consulta utilizando marcadores de posición anónimos.
      - Devuelve un mensaje de éxito si la actualización es exitosa.
      - Captura y maneja excepciones, devolviendo un mensaje de error en caso de fallo.
-     - Cierra la conexión a la base de datos al final. -->
-<?php
+     - Cierra la conexión a la base de datos al final. -->*/
 
 // Datos de conexión a la base de datos
 $servername = "localhost";

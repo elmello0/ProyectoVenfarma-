@@ -1,4 +1,7 @@
-<!-- Este script PHP gestiona la conexión a una base de datos y recupera datos específicos.
+
+<?php
+
+/* <!-- Este script PHP gestiona la conexión a una base de datos y recupera datos específicos.
      - Define las credenciales para la conexión a la base de datos (servidor, usuario, contraseña, nombre de la base de datos).
      - Recoge el nombre de la demanda de la solicitud GET, usando un valor vacío si no se proporciona.
      - Usa PDO para intentar una conexión segura con la base de datos:
@@ -8,8 +11,8 @@
        - Si encuentra un registro, obtiene y envía la descripción.
        - Si no hay registros, informa que no se encontró la descripción.
      - En caso de error en la conexión o consulta, captura la excepción y muestra un mensaje de error.
-     - Cierra la conexión a la base de datos al final del script, independientemente del resultado. -->
-<?php
+     - Cierra la conexión a la base de datos al final del script, independientemente del resultado. -->*/
+
 // Establezco las credenciales para conectarme a la base de datos.
 $servername = "localhost";
 $username = "root";

@@ -1,0 +1,38 @@
+/* estilos_demandas.css */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #34a853;
+    color: white;
+    text-align: center;
+    padding: 1rem 0;
+    font-size: 2rem;
+}
+
+button {
+    background-color: #0f100f;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    margin: 1rem;
+    cursor: pointer;
+    border-radius: 0.3rem;
+}
+
+button:hover {
+    background-color: #288c3b;
+}
+
+#demandasContainer {
+    width: 90%;
+    margin: 2rem auto;
+    padding: 1rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 0.3rem;
+}

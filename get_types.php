@@ -1,6 +1,9 @@
-<!--El código que proporcionaste es un script PHP que se conecta a una base de datos MySQL y recupera
-datos de una tabla llamada "tipo". Aquí hay un desglose de lo que hace el código: -->
+
 <?php
+
+/* <!--El código que proporcionaste es un script PHP que se conecta a una base de datos MySQL y recupera
+datos de una tabla llamada "tipo". Aquí hay un desglose de lo que hace el código: --> */
+
 
 // conexión a la base de datos
 $servername = "localhost";

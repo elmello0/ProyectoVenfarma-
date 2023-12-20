@@ -1,7 +1,12 @@
-<!-- El código que proporcionó es un script PHP que se conecta a una base de datos MySQL usando PDO
-(objetos de datos PHP) y recupera datos de demanda de una tabla llamada "demanda". -->
 <?php
-// Establezco las credenciales para conectarme a la base de datos.
+
+
+/* El código que proporcionó es un script PHP que se conecta a una base de datos MySQL usando PDO
+(objetos de datos PHP) y recupera datos de demanda de una tabla llamada "demanda" */
+
+
+
+
 $servername = "localhost";
 $username = "root";
 $password = "";

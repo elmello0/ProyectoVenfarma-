@@ -1,6 +1,8 @@
-<!-- El código que proporcionó es un script PHP que se utiliza para agregar un empleado a una base de
-datos. -->
+
 <?php
+
+/*<!-- El código que proporcionó es un script PHP que se utiliza para agregar un empleado a una base de
+datos. -->*/
 // añadirEmpleado.php
 $servername = "localhost";
 $username = "root";

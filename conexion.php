@@ -1,5 +1,7 @@
-<!-- El código que proporcionó establece una conexión a una base de datos MySQL usando PHP. -->
+
 <?php
+
+/*<!-- El código que proporcionó establece una conexión a una base de datos MySQL usando PHP. -->*/
 // Configuro las credenciales para conectarme a la base de datos.
 $host = "localhost";
 $user = "root";

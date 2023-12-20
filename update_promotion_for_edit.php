@@ -1,4 +1,6 @@
-<!-- Este script PHP actualiza datos de promociones en una base de datos.
+
+<?php
+/*<!-- Este script PHP actualiza datos de promociones en una base de datos.
      - Configura la conexión a la base de datos.
      - Recibe y valida datos del formulario (id, nombre, estado, descuento, fechas de inicio y final).
      - Si falta algún dato, devuelve un mensaje de error y termina el script.
@@ -7,8 +9,8 @@
      - Vincula los datos del formulario a la consulta.
      - Comprueba si se actualizó alguna fila y devuelve un mensaje de éxito o de no cambios.
      - Maneja posibles excepciones PDO, enviando un mensaje de error en caso de falla.
-     - Cierra la conexión a la base de datos al finalizar. -->
-<?php
+     - Cierra la conexión a la base de datos al finalizar. -->*/
+     
 // Configuración de conexión a la base de datos
 $servername = "localhost";
 $username = "root";

@@ -1,9 +1,3 @@
-<!-- Este documento HTML define la estructura básica de una página web con enfoque en la administración de productos.
-     - Incluye la declaración DOCTYPE para HTML5 y etiquetas <html> y <head> con configuraciones estándar de codificación y visualización responsiva.
-     - Un enlace a la hoja de estilos 'estilos_menu_admin.css' para el diseño.
-     - Un script en el cuerpo que, al cargar el documento, ejecuta 'buscarProducto()' para cargar datos inicialmente.
-     - Un encabezado con el título 'Productos' y un subencabezado que contiene botones de navegación para diferentes secciones como 'Menú Admin', 'Productos', 'Demandas', 'Historial' y 'Empleados', cada uno enlazado a su respectivo archivo PHP.
-     - Un 'div' con un 'h1' vacío, posiblemente para ser llenado dinámicamente o para futuras expansiones del contenido. -->
 <!DOCTYPE html>
 <html lang="en">
     
@@ -32,16 +26,27 @@
 <div>
     <h1> </h1>
 </div>
-<!-- Este fragmento de código incluye un formulario de búsqueda, botones para diversas acciones y un script para cargar promociones.
-     - El 'form' envía una petición GET a 'buscar_producto.php' con un campo de entrada para buscar productos.
-     - Botones en 'div.container' para añadir productos, categorías, familias, tipos y para alternar la visualización de productos activos/inactivos.
-     - Un 'div#tablaProductos' probablemente utilizado para mostrar resultados.
-     - Un script que, al cargar el documento, llama a 'loadAllPromotions()' para obtener promociones desde 'get_promotions.php', mostrando los datos en consola y manejando errores. -->
+
 <form action="buscar_producto.php" method="GET">
-    <label for="nombre_producto">Buscar Producto:</label>
+    <!-- Campo de entrada para el término de búsqueda -->
+    <label for="terminoBusqueda">Buscar Producto:</label>
     <input type="text" id="terminoBusqueda" onkeyup="buscarProducto()" placeholder="Buscar producto...">
-    
+
+    <!-- Selector para el criterio de búsqueda -->
+    <select id="criterioBusqueda">
+        <option value="nombre">Nombre</option>
+        <option value="stock">Stock</option>
+        <option value="precio">Precio</option>
+        <option value="descuento">Descuento</option>
+        <option value="promocion">Promoción</option>
+        <option value="categoria">Categoría</option>
+        <option value="familia">Familia</option>
+        <option value="tipo">Tipo</option>
+    </select>
+    <button type="button" onclick="ordenarProductos()">Ordenar</button>
+
 </form>
+
 
 <div class="container">
 <button onclick="openModal()">Añadir Producto</button>
@@ -70,17 +75,7 @@ function loadAllPromotions() {
 </script>
 </script>
 <!-- obtener los datos de cada opcion en el menu desplegable --------------------------------------------------------> 
-<!-- Este script JavaScript es para rellenar un selector de categorías en un formulario de manera dinámica.
-     - Hace una petición fetch a 'get_categories.php' para obtener datos de categorías.
-     - Transforma la respuesta a formato JSON.
-     - Encuentra el elemento 'select' con el nombre 'categoria_idcategoria' en el documento.
-     - Limpia cualquier opción existente en este selector para añadir nuevas.
-     - Itera sobre cada objeto 'category' en el JSON y por cada uno:
-       - Crea un elemento 'option'.
-       - Asigna el valor de 'option' al 'id' de 'category'.
-       - Establece el texto del 'option' con el 'nombre' de 'category'.
-       - Añade el 'option' al selector 'categoria_idcategoria'.
-     - Incluye manejo de errores para capturar y registrar cualquier error en la consola. -->
+
     <script>
         // AJAX para obtener las categorías y cargarlas en el menú desplegable
         fetch('get_categories.php')
@@ -95,24 +90,13 @@ function loadAllPromotions() {
                 // Agregar las nuevas opciones desde la respuesta JSON
                 categories.forEach(category => {
     const option = document.createElement('option');
-    option.value = category.id; // Usar 'id' en lugar de 'idcategoria'
+    option.value = category.id;
     option.textContent = category.nombre;
     selectCategory.appendChild(option);
 });
             })
             .catch(error => console.error('Error:', error));
     </script>
-    <!-- Este script JavaScript está diseñado para cargar dinámicamente un selector de familias en un formulario.
-     - Utiliza una solicitud fetch a 'get_families.php' para obtener datos de familias.
-     - Al recibir la respuesta, la convierte a formato JSON.
-     - Selecciona el elemento 'select' con nombre 'familia_idfamilia' del documento.
-     - Limpia las opciones actuales del selector para añadir nuevas.
-     - Itera sobre cada objeto 'family' en la respuesta JSON y por cada uno:
-       - Crea un nuevo elemento 'option'.
-       - Asigna el valor de 'option' al 'id' de 'family'.
-       - Establece el texto de 'option' con el 'nombre' de 'family'.
-       - Agrega el 'option' creado al selector 'familia_idfamilia'.
-     - Implementa manejo de errores para registrar cualquier error en la consola. -->
     <script>
     fetch('get_families.php')
         .then(response => response.json())
@@ -126,26 +110,14 @@ function loadAllPromotions() {
             // Agregar las nuevas opciones desde la respuesta JSON
             families.forEach(family => {
     const option = document.createElement('option');
-    option.value = family.id; // Usar 'id' en lugar de 'idfamilia'
+    option.value = family.id; 
     option.textContent = family.nombre;
     selectFamily.appendChild(option);
 });
         })
         .catch(error => console.error('Error:', error));
 </script>
-<!-- Este script JavaScript se utiliza para poblar dinámicamente un selector de tipos en un formulario HTML.
-     - Realiza una solicitud fetch a 'get_types.php' para obtener datos.
-     - Al recibir una respuesta, la procesa como JSON.
-     - Accede al elemento select con nombre 'tipo_idtipo' en el documento.
-     - Limpia cualquier opción existente en este selector para prepararlo para nuevas entradas.
-     - Itera sobre cada 'type' en la respuesta JSON y para cada uno:
-       - Crea un elemento 'option'.
-       - Establece el valor de la opción con el 'id' del 'type'.
-       - Establece el texto de la opción con el 'nombre' del 'type'.
-       - Agrega la opción creada al selector 'tipo_idtipo'.
-     - Incluye manejo de errores para lograr cualquier error en la consola. -->
 <script>
-    
     fetch('get_types.php')
         .then(response => response.json())
         .then(types => {
@@ -158,7 +130,7 @@ function loadAllPromotions() {
             // Agregar las nuevas opciones desde la respuesta JSON
             types.forEach(type => {
     const option = document.createElement('option');
-    option.value = type.id; // Usar 'id' en lugar de 'idtipo'
+    option.value = type.id;
     option.textContent = type.nombre;
     selectType.appendChild(option);
 });
@@ -171,18 +143,6 @@ function loadAllPromotions() {
 
 </div>
 <!-- Modal para editar producto -->
-<!-- Este fragmento de código HTML es para una ventana modal destinada a la edición de productos.
-     - 'div#editProductModal': Contenedor modal con estilos para centrarlo en la pantalla y mantenerlo oculto inicialmente.
-     - 'h2': Título indicando que la ventana modal es para editar productos.
-     - 'form#editProductForm': Formulario que incluye:
-       - Campos para editar el nombre, stock y precio del producto, todos requeridos.
-       - Selector de estado con opciones 'activo' e 'inactivo'.
-       - Botón para abrir una modal de promociones en modo edición y un campo oculto para guardar el ID de la promoción seleccionada.
-       - Área para mostrar el nombre de la promoción actualmente seleccionada.
-       - Selectores para categoría, familia y tipo del producto, todos requeridos.
-       - Campo oculto para almacenar el ID del producto que se está editando.
-       - Botón de envío para guardar los cambios realizados.
-     - Botón 'Cerrar' que activa 'closeEditModal()' para ocultar la ventana modal. -->
 <div id="editProductModal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px;">
     <h2>Editar Producto</h2>
     <form id="editProductForm">
@@ -207,19 +167,10 @@ function loadAllPromotions() {
 </div>
 
 
-<!-- Modal para añadir producto -->
-<!-- Este fragmento de código HTML implementa una ventana modal para añadir productos.
-     - 'div#addProductModal': Contenedor modal con estilo para centrarlo y mantenerlo inicialmente oculto.
-     - 'h2': Encabezado que indica que la modal es para añadir productos.
-     - 'form#addProductForm': Formulario que contiene:
-       - Campo para el nombre del producto, campo numérico para stock y precio, todos requeridos.
-       - Selector de estado con opciones 'activo' e 'inactivo'.
-       - Botón para abrir una modal de promociones y un campo oculto para almacenar el ID de la promoción seleccionada.
-       - Visualización del nombre de la promoción seleccionada.
-       - Selectores para categoría, familia y tipo del producto, todos requeridos.
-       - Botón de envío para añadir el producto.
-     - Botón 'Cerrar' para ocultar la ventana modal, vinculado a 'closeModal()'. -->
+<!-- Modal para añadir producto --------------------------------------------------------> 
 
+
+<!-- Modal para añadir producto -->
 <div id="addProductModal" style="display:none; position:fixed; top:35%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px;">
     <h2>Añadir Producto</h2>
     <form id="addProductForm">
@@ -245,11 +196,7 @@ function loadAllPromotions() {
 
 
 <!-- Modal para añadir categoría ---------------------------------------------------->
-<!-- Este código HTML representa una ventana modal para añadir categorías.
-     - 'div#addCategoryModal': Contenedor modal, inicialmente oculto, estilizado y centrado.
-     - 'h2': Título de la funcionalidad.
-     - 'form#addCategoryForm': Formulario con campos para el nombre y descripción de la categoría y un botón de envío.
-     - 'button': Botón para cerrar la ventana, vinculado a 'closeCategoryModal()'. -->
+
 
 <div id="addCategoryModal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px;">
     <h2>Añadir Categoría</h2>
@@ -263,9 +210,7 @@ function loadAllPromotions() {
 
 
 
-<!-- Este código siguiente representa un modal HTML utilizado para añadir familias. 
-Este modal incluye un campo para ingresar el nombre de una nueva familia y un botón para añadirla. 
-También contiene un botón para cerrar el modal. El modal está oculto por defecto (display:none) y se muestra cuando es necesario. -->
+
 <!-- Modal para añadir familia -------------------------------------------------------->
 
 
@@ -278,10 +223,6 @@ También contiene un botón para cerrar el modal. El modal está oculto por defe
     <button onclick="closeFamilyModal()">Cerrar</button>
 </div>
 
-
-<!-- Este código   representa un modal HTML utilizado para añadir tipos. 
-Este modal incluye un campo para ingresar el nombre de un nuevo tipo y un botón para añadirlo.
- También contiene un botón para cerrar el modal. El modal está oculto por defecto (display:none) y se muestra cuando es necesario. -->
 <!-- Modal para añadir tipo --------------------------------------------------------------->
 
 
@@ -294,9 +235,6 @@ Este modal incluye un campo para ingresar el nombre de un nuevo tipo y un botón
     <button onclick="closeTypeModal()">Cerrar</button>
 </div>
 
-<!-- Este código   representa un modal HTML utilizado para añadir demandas. Este modal incluye 
-campos para ingresar el nombre, fecha, descripción y estado de una nueva demanda. También contiene un 
-botón para añadir la demanda y otro para cerrar el modal. El modal está oculto por defecto (display:none) y se muestra cuando es necesario. -->
 
 <!-- Modal para añadir demanda -->
 <div id="addDemandModal" style="display:none; position:fixed; top:20%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px;">
@@ -316,11 +254,6 @@ botón para añadir la demanda y otro para cerrar el modal. El modal está ocult
 </div>
 
 
-<!-- Este código   representa un modal HTML utilizado para seleccionar promociones. 
-El modal incluye una tabla que muestra información sobre las promociones, como ID, nombre,
- estado, descuento, fecha de inicio y fecha final. Los datos de cada promoción se cargarían dinámicamente en la tabla. 
- El modal también contiene botones para cerrar el modal, ocultar/promociones inactivas y añadir una nueva promoción. 
- El modal está oculto por defecto (display:none) y se muestra cuando es necesario. -->
 
 <div id="promotionModal" style="display:none; position:fixed; top:45%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border-radius:10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 0;">
     <h2>Seleccionar Promoción</h2>
@@ -337,7 +270,7 @@ El modal incluye una tabla que muestra información sobre las promociones, como 
         </tr>
         <!-- Los datos de cada promoción se cargarían aquí dinámicamente -->
     </table>
-    <!-- Boton para cerrar el modal -->
+    <!-- Button to close the modal -->
     </div>
     <button onclick="closePromotionModal()">Cerrar</button>
     <button id="toggleActivePromotions" onclick="toggleActivePromotions()">Ocultar Inactivos</button>
@@ -347,10 +280,6 @@ El modal incluye una tabla que muestra información sobre las promociones, como 
 
 
 
-<!-- Este código   representa un modal HTML utilizado para añadir promociones.
- Este modal incluye campos para ingresar el nombre, estado, descuento y fechas de inicio y 
- finalización de una nueva promoción. También contiene un botón para crear la promoción y otro 
- para cerrar el modal. El modal está oculto por defecto (display:none) y se muestra cuando es necesario. -->
 
 <!-- Modal para añadir promoción -------------------------------------------------->
 
@@ -372,10 +301,6 @@ El modal incluye una tabla que muestra información sobre las promociones, como 
 
 
 
-<!-- Este código   representa un modal HTML utilizado para editar promociones. 
-Este modal incluye campos para modificar el nombre, estado, descuento y
- fechas de inicio y finalización de una promoción. También contiene botones para
-  guardar los cambios y cancelar la edición. El modal está oculto por defecto (display:none) y se muestra cuando es necesario. -->
 
 <!-- Modal de Edición de Promoción -->
 <div id="editPromotionModal" style="display:none; position:fixed; top:30%; left:50%; transform:translate(-50%, -50%); background-color:white; padding:20px; border-radius:10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1  ;">
@@ -405,11 +330,6 @@ Este modal incluye campos para modificar el nombre, estado, descuento y
 
 
 <!----------------------------------------------------------------Editar-------------------------------------------------------->
-<!-- Este código   contiene varias funciones JavaScript relacionadas con la edición de productos y la 
-gestión de modales. La función 'selectPromotionForEdit' se utiliza para seleccionar una promoción en modo de edición.
- 'openEditModal' se encarga de mostrar el modal de edición de productos y cargar los datos del producto seleccionado. 
- 'closeEditModal' cierra el modal de edición. 'openPromotionModalForEdit' se utiliza para abrir el modal de promociones 
- en modo de edición y realizar la solicitud para cargar las promociones desde la base de datos. -->
 
 <script>
 function selectPromotionForEdit() {
@@ -420,7 +340,7 @@ function selectPromotionForEdit() {
     
     function openEditModal(idProducto) {
     document.getElementById("editProductModal").style.display = "block";
-    loadProductData(idProducto); // Mover esta línea después de mostrar el modal
+    loadProductData(idProducto); 
 }
 
 
@@ -433,11 +353,6 @@ function openPromotionModalForEdit() {
 }
 
 
-/* Este código   contiene una función JavaScript llamada 'submitEditProductForm', 
-que se encarga de enviar un formulario de edición de producto mediante una solicitud fetch. 
-Después de procesar la respuesta JSON, la función actualiza la interfaz de usuario y muestra 
-mensajes de éxito o error. Asegúrate de adjuntar esta función al evento de envío del formulario 
-para manejar la solicitud de manera asíncrona y evitar la recarga de la página al enviar el formulario.*/
 
 function submitEditProductForm() {
     var form = document.getElementById('editProductForm');
@@ -463,15 +378,17 @@ function submitEditProductForm() {
     });
 }
 
+
+// Agrega el formulario de ediciónProductForm para Editar el formulario
 document.getElementById('editProductForm').addEventListener('submit', function(event) {
     event.preventDefault(); 
     submitEditProductForm();
 });
 
-/* Este código   contiene funciones JavaScript que se utilizan para seleccionar una promoción y 
-actualizar la visualización del nombre de la promoción en formularios modales, tanto en el modo de edición 
-como en el modo de añadir producto. También cierra el modal de promociones si está abierto.
- La función 'updatePromotionNameDisplayEdit' se utiliza para actualizar el nombre de la promoción en el formulario modal de edición.*/
+
+
+
+// Actualiza el modal de seleccionar un promocion en la Base de datos
 
 function selectPromotion(id, isEditMode = false) {
     var promotion = allPromotions.find(promo => promo.idpromocion == id);
@@ -512,9 +429,8 @@ function updatePromotionNameDisplayEdit(promocionId) {
     }
 }
 
-/* Este código   es una función JavaScript que realiza una solicitud fetch para cargar datos de un producto.
-    Utiliza la respuesta JSON para llenar campos en un formulario modal de edición y maneja errores de manera adecuada. */
 
+// Función que carga la vista de producto en la base de
 function loadProductData(productId) {
     fetch('editar_producto.php?id=' + productId)
         .then(response => response.json())
@@ -567,7 +483,7 @@ function loadSelectOptions(url, selectElementName, modalId) {
 */
 function selectPromotionForAdd() {
     openPromotionModal();
-    window.isEditMode = false; 
+    window.isEditMode = false; // Establece el modo a "añadir"
 }
 
 /**
@@ -627,7 +543,7 @@ function submitAddProductForm() {
 }
 
 
-/*Este código   está escrito en JavaScript, no en PHP. Está agregando un detector de eventos al formulario con
+/*El código anterior está escrito en JavaScript, no en PHP. Está agregando un detector de eventos al formulario con
 la identificación "addProductForm". Cuando se envía el formulario, el detector de eventos evitará que el formulario
 siendo presentado de la forma tradicional. En su lugar, llamará a la función "submitAddProductForm()".
 para manejar el envío del formulario.*/
@@ -653,7 +569,7 @@ function selectPromotion(id) {
 }
 
 // Llamar a esta función al cargar la página o cuando sea necesario
-/*Este código   llama a una función llamada "loadAllPromotions" en PHP. */
+/*El código anterior llama a una función llamada "loadAllPromotions" en PHP. */
 loadAllPromotions();
 </script>
 
@@ -677,7 +593,7 @@ function closeAddPromotionModal() {
 
 
 
-/*Este código   está escrito en JavaScript y agrega un detector de eventos a un formulario con la identificación
+/*El código anterior está escrito en JavaScript y agrega un detector de eventos a un formulario con la identificación
 "agregar formulario de promoción". Cuando se envía el formulario, evita el comportamiento de envío de formulario predeterminado. Él
 luego crea un nuevo objeto FormData a partir de los datos del formulario. */
 document.getElementById('addPromotionForm').addEventListener('submit', function(event) {
@@ -737,7 +653,7 @@ function closeEditPromotionModal() {
     document.getElementById('editPromotionModal').style.display = 'none';
 }
 //Botón para alternar la visualización de promociones activas/inactivas
-/*Este código es una función PHP que alterna la visibilidad de promociones inactivas en una tabla. */
+/*El código anterior es una función PHP que alterna la visibilidad de promociones inactivas en una tabla. */
 function toggleActivePromotions() {
     // Obtener todas las filas de la tabla
     var table = document.getElementById('promotionModal').getElementsByTagName('table')[0];
@@ -763,9 +679,11 @@ function toggleActivePromotions() {
 }
 // BOTONES -------------------------------- ------------------------------------------------ -------------------------------- 
 
+
+
     // Variables globales
 
-/*Este código   declara dos variables, "showInactive" y "selectedPromotionIdAdd", y
+/*El código anterior declara dos variables, "showInactive" y "selectedPromotionIdAdd", y
 inicializándolos con los valores "verdadero" y "nulo" respectivamente. También declara otra
 variable "selectedPromotionIdEdit" e inicializándola con el valor "null". */
 var showInactive = true;
@@ -881,6 +799,13 @@ function updatePromotionOnServer(formData) {
  *promociones.
  */
 function buildTable(promotions) {
+    // Ordenar las promociones para que las activas aparezcan primero
+    promotions.sort((a, b) => {
+        let estadoA = a.estado.toLowerCase() === 'activo' ? 0 : 1;
+        let estadoB = b.estado.toLowerCase() === 'activo' ? 0 : 1;
+        return estadoA - estadoB;
+    });
+
     var promotionModal = document.getElementById('promotionModal');
     var table = promotionModal.getElementsByTagName('table')[0];
     table.innerHTML = '';
@@ -898,14 +823,13 @@ function buildTable(promotions) {
     var tbody = document.createElement('tbody');
     promotions.forEach(promotion => {
         var tr = tbody.insertRow();
-        tr.insertCell().innerText = promotion.idpromocion; // ID de la promoción
+        tr.insertCell().innerText = promotion.idpromocion;
         tr.insertCell().innerText = promotion.nombre;
         tr.insertCell().innerText = promotion.estado;
-        tr.insertCell().innerText = promotion.descuento + '%'; // Descuento con símbolo %
+        tr.insertCell().innerText = promotion.descuento + '%';
         tr.insertCell().innerText = promotion.fecha_inicio;
         tr.insertCell().innerText = promotion.fecha_final;
 
-        // La columna 'Acciones' es donde se colocarán los botones
         var actionCell = tr.insertCell();
         var selectButton = createButton('Seleccionar', () => handleSelectPromotion(promotion.idpromocion));
         var editButton = createButton('Editar', () => editPromotion(promotion.idpromocion));
@@ -915,8 +839,6 @@ function buildTable(promotions) {
     table.appendChild(tbody);
     promotionModal.style.display = 'block';
 }
-
-
 
 /**
  *La función createButton crea un elemento de botón con el texto especificado y el evento onClick
@@ -997,7 +919,7 @@ function fetchPromotionsFromDatabase() {
 // ************************************************* PROMOCION CONTEXTO EDITAR********************************************************
 
 
-/*Este código   declara dos variables en PHP. */
+/*El código anterior declara dos variables en PHP. */
 
 var showInactiveForEdit = true;
 var selectedPromotionIdEdit = null;
@@ -1009,6 +931,7 @@ var selectedPromotionIdEdit = null;
  *La función "selectPromotionForEdit" actualiza la visualización y los campos de entrada ocultos en el producto.
  *edita el formulario con el nombre y ID de la promoción seleccionada, y cierra el modal de promoción.
  */
+
 function selectPromotionForEdit(id) {
     var promotion = allPromotions.find(promo => promo.idpromocion == id);
     var promotionName = promotion ? promotion.nombre : 'No se encontró la promoción';
@@ -1161,7 +1084,7 @@ function reloadPromotionsForEdit() {
 }
 
 /**
- *Este código define una función para recuperar datos de promoción por ID para editar y una función para abrir una
+ *El código define una función para recuperar datos de promoción por ID para editar y una función para abrir una
  *modalidad de promoción para edición.
  *
  *@return La función `getPromotionDataByIdForEdit` devuelve el objeto de datos de promoción con el
@@ -1204,7 +1127,7 @@ function toggleActivePromotionsForEdit() {
    // ************************************************* SCRIPTS PARA LOS BOTONES********************************************************
     // -------------------------------------------------------------categorias------------------------------------------------
 /**
- *Este código   define dos funciones en PHP que abren y cierran un modal de categoría.
+ *El código anterior define dos funciones en PHP que abren y cierran un modal de categoría.
  */
 function openCategoryModal() {
     document.getElementById("addCategoryModal").style.display = "block";
@@ -1218,7 +1141,7 @@ function closeCategoryModal() {
 
     //------------------------------------------------ Familia ----------------------------------------------------------------
 /**
- *Este código   define dos funciones en PHP que abren y cierran un modal en JavaScript.
+ *El código anterior define dos funciones en PHP que abren y cierran un modal en JavaScript.
  */
 function openFamilyModal() {
     document.getElementById("addFamilyModal").style.display = "block";
@@ -1232,7 +1155,7 @@ function closeFamilyModal() {
 
     //------------------------------------------------- tipo ----------------------------------------------------------------
 /**
- *Este código PHP   define dos funciones, `openTypeModal()` y `closeTypeModal()`, que
+ *El código PHP anterior define dos funciones, `openTypeModal()` y `closeTypeModal()`, que
  *mostrar y ocultar respectivamente un modal con el id "addTypeModal".
  */
 function openTypeModal() {
@@ -1247,7 +1170,7 @@ function closeTypeModal() {
 
     //------------------------------------------------- demanda ----------------------------------------------------------------
 /**
- *Este código   define dos funciones en PHP que abren y cierran un modal de demanda.
+ *El código anterior define dos funciones en PHP que abren y cierran un modal de demanda.
  */
 function openDemandModal() {
     document.getElementById("addDemandModal").style.display = "block";
@@ -1269,19 +1192,24 @@ function closeDemandModal() {
  */
 function buscarProducto() {
     var terminoBusqueda = document.getElementById('terminoBusqueda').value;
-    fetch('buscarProducto.php?terminoBusqueda=' + encodeURIComponent(terminoBusqueda))
+    var criterioBusqueda = document.getElementById('criterioBusqueda').value;
+
+    fetch('buscarProducto.php?terminoBusqueda=' + encodeURIComponent(terminoBusqueda) + '&criterio=' + criterioBusqueda)
     .then(response => response.json())
     .then(data => {
+        console.log(data); // Imprime los datos en la consola para depuración
         actualizarTablaProductos(data);
     })
     .catch(error => console.error('Error:', error));
 }
+
 
 /**
  *La función "actualizarTablaProductos" actualiza el div "tablaProductos" con una nueva tabla basada en
  *los datos recibidos.
  */
 function actualizarTablaProductos(data) {
+    console.log(data);  // Imprime los datos para depuración
     var tablaProductosDiv = document.getElementById('tablaProductos');
     
     // Limpia la tabla existente antes de añadir los nuevos resultados
@@ -1292,6 +1220,7 @@ function actualizarTablaProductos(data) {
     tablaProductosDiv.innerHTML = html;
 }
 
+
 /**
  *La función `construirTablaProductos` toma una matriz de productos y construye una tabla HTML con
  *su información.
@@ -1299,30 +1228,114 @@ function actualizarTablaProductos(data) {
  *@return una cadena HTML que representa una tabla de productos.
  */
 function construirTablaProductos(productos) {
-    var html = '<table border="1"><tr><th>ID Producto</th><th>Nombre</th><th>Stock</th><th>Precio Original</th><th>Precio con Descuento</th><th>Estado</th><th>Promoción</th><th>Categoría</th><th>Familia</th><th>Tipo</th><th>Acciones</th></tr>';
+    productos.sort((a, b) => {
+        let estadoA = a.estado.toLowerCase() === 'activo' ? 0 : 1;
+        let estadoB = b.estado.toLowerCase() === 'activo' ? 0 : 1;
+        return estadoA - estadoB;
+    });
+    var html = '<table border="1"><tr>' +
+                '<th>ID Producto</th>' +
+                '<th>Nombre</th>' +
+                '<th>Stock</th>' +
+                '<th>Precio Original</th>' +
+                '<th>Precio con Descuento</th>' +
+                '<th>Estado Producto</th>' +
+                '<th>Estado Promoción</th>' +
+                '<th>Nombre Promoción</th>' +
+                '<th>Descuento</th>' +
+                '<th>Nombre Categoría</th>' +
+                '<th>Nombre Familia</th>' +
+                '<th>Nombre Tipo</th>' +
+                '<th>Acciones</th></tr>';
+
     productos.forEach(function(producto) {
+        
+        
         var precioOriginal = Math.round(producto.precio);
-        var precioConDescuento = calcularPrecioConDescuento(producto.precio, producto.descuento);
+        var descuentoAplicable = (producto.estado_promocion === 'activo') ? parseFloat(producto.descuento) : 0;
+        var precioConDescuento = calcularPrecioConDescuento(precioOriginal, descuentoAplicable);
         precioConDescuento = Math.round(precioConDescuento);
 
         html += "<tr>" +
-                    "<td>" + producto.idProducto + "</td>" +
-                    "<td>" + producto.nombre + "</td>" +
-                    "<td>" + producto.stock + "</td>" +
-                    "<td>$" + precioOriginal + "</td>" + // Redondear precio original
-                    "<td>$" + precioConDescuento + "</td>" + // Redondear precio con descuento
-                    "<td>" + producto.estado + "</td>" + 
-                    "<td>" + producto.nombre_promocion + " (" + producto.descuento + "%)" + "</td>" +
-                    "<td>" + producto.nombre_categoria + "</td>" +
-                    "<td>" + producto.nombre_familia + "</td>" +
-                    "<td>" + producto.nombre_tipo + "</td>" +
-                    "<td><button onclick='openEditModal(" + producto.idProducto + ")'>Editar</button></td>" +
+                "<td>" + producto.idProducto + "</td>" +
+                "<td>" + producto.nombre + "</td>" +
+                "<td>" + producto.stock + "</td>" +
+                "<td>$" + precioOriginal + "</td>" +
+                "<td>$" + (descuentoAplicable > 0 ? precioConDescuento : precioOriginal) + "</td>" +
+                "<td>" + producto.estado + "</td>" +
+                "<td>" + (producto.estado_promocion || 'No especificado') + "</td>" +
+                "<td>" + (producto.nombre_promocion || 'No aplica') + "</td>" +
+                "<td>" + (descuentoAplicable > 0 ? producto.descuento + "%" : "No aplica") + "</td>" +
+                "<td>" + (producto.nombre_categoria || 'No especificado') + "</td>" +
+                "<td>" + (producto.nombre_familia || 'No especificado') + "</td>" +
+                "<td>" + (producto.nombre_tipo || 'No especificado') + "</td>" +
+                "<td><button onclick='openEditModal(" + producto.idProducto + ")'>Editar</button></td>" +
                 "</tr>";
     });
+
     html += '</table>';
     return html;
 }
 
+
+function ordenarProductos() {
+    var criterio = document.getElementById('criterioBusqueda').value;
+    buscarProducto(); // Esta función debería actualizar la tabla de productos según el término de búsqueda.
+    // Luego ordenamos los productos según el criterio
+    ordenarTabla(criterio);
+}
+
+function ordenarTabla(criterio) {
+    var productos = obtenerProductosDesdeTabla();
+    var esDescendente = false; // Puedes alternar esto según necesites cambiar el orden de clasificación
+
+    productos.sort((a, b) => {
+        var valorA = a[criterio];
+        var valorB = b[criterio];
+
+        if (!isNaN(parseFloat(valorA)) && !isNaN(parseFloat(valorB))) {
+            // Orden numérico
+            return esDescendente ? valorB - valorA : valorA - valorB;
+        } else {
+            // Orden alfabético
+            valorA = valorA ? valorA.toString().toLowerCase() : '';
+            valorB = valorB ? valorB.toString().toLowerCase() : '';
+            if (valorA < valorB) return esDescendente ? 1 : -1;
+            if (valorA > valorB) return esDescendente ? -1 : 1;
+            return 0;
+        }
+    });
+
+    // Luego debes actualizar la tabla con la nueva lista ordenada de productos
+    actualizarTablaProductos(productos);
+}
+
+function obtenerProductosDesdeTabla() {
+    // Esta función debería extraer los productos desde la tabla HTML y convertirlos en un array de objetos
+    var tablaProductos = document.getElementById('tablaProductos');
+    var filas = tablaProductos.getElementsByTagName('tr');
+    var productos = [];
+
+    for (var i = 1; i < filas.length; i++) { // Comenzamos en 1 para saltarnos la cabecera de la tabla
+        var celdas = filas[i].getElementsByTagName('td');
+        var producto = {
+            idProducto: celdas[0].innerText,
+            nombre: celdas[1].innerText,
+            // ... y así con el resto de las celdas y sus correspondientes propiedades
+        };
+        productos.push(producto);
+    }
+
+    return productos;
+}
+
+function actualizarTablaProductos(productos) {
+    // Limpia la tabla y construye de nuevo con los productos ordenados
+    var tablaProductosDiv = document.getElementById('tablaProductos');
+    tablaProductosDiv.innerHTML = ''; 
+    var html = construirTablaProductos(productos);
+    tablaProductosDiv.innerHTML = html;
+}
 
 
 /**
@@ -1344,6 +1357,7 @@ function toggleActiveProducts() {
     var rows = document.querySelectorAll('#tablaProductos tr:not(:first-child)'); // Selecciona todas las filas excepto la cabecera
 
     rows.forEach(function(row) {
+        // Asumiendo que el estado está en la quinta columna (ajusta según sea necesario)
         var estado = row.cells[5] ? row.cells[5].innerText : '';
 
         if (estado.toLowerCase() === 'inactivo') {
@@ -1367,7 +1381,7 @@ function toggleActiveProducts() {
 //AJAX para enviar la información al servidor
 //parte de producto -----------------------------------------------------------------------------------------------------------------------------
 //parte de categoria -----------------------------------------------------------------------------------------------------------------------------
-/*Este código   está escrito en JavaScript y agrega un detector de eventos a un formulario con la identificación
+/*El código anterior está escrito en JavaScript y agrega un detector de eventos a un formulario con la identificación
 "añadirCategoríaForm". Cuando se envía el formulario, evita el comportamiento de envío de formulario predeterminado.
 Luego crea un nuevo objeto FormData a partir de los datos del formulario.*/
     document.getElementById("addCategoryForm").addEventListener("submit", function(event){
@@ -1390,7 +1404,7 @@ Luego crea un nuevo objeto FormData a partir de los datos del formulario.*/
 });
 
 //parte de familia --------------------------------------------------------------------------------------------------------------------------------
-/*Este código   está escrito en JavaScript y agrega un detector de eventos a un formulario con la identificación
+/*El código anterior está escrito en JavaScript y agrega un detector de eventos a un formulario con la identificación
 "agregar formulario familiar". Cuando se envía el formulario, evita el comportamiento de envío de formulario predeterminado. Él
 luego crea un nuevo objeto FormData a partir de los datos del formulario.*/
 document.getElementById("addFamilyForm").addEventListener("submit", function(event) {
@@ -1412,7 +1426,7 @@ document.getElementById("addFamilyForm").addEventListener("submit", function(eve
     });
 });
 //parte de tipo --------------------------------------------------------------------------------------------------------------------------------
-/*Este código   está escrito en JavaScript y agrega un detector de eventos a un formulario con la identificación
+/*El código anterior está escrito en JavaScript y agrega un detector de eventos a un formulario con la identificación
 "añadirTypeForm". Cuando se envía el formulario, evita el comportamiento de envío de formulario predeterminado. entonces
 Crea un nuevo objeto FormData a partir de los datos del formulario.*/
 document.getElementById("addTypeForm").addEventListener("submit", function(event) {
@@ -1435,11 +1449,11 @@ document.getElementById("addTypeForm").addEventListener("submit", function(event
 });
 
 
-/*Este código   está escrito en JavaScript y utiliza el evento DOMContentLoaded para ejecutar una
+/*El código anterior está escrito en JavaScript y utiliza el evento DOMContentLoaded para ejecutar una
 funcion cuando el documento HTML haya terminado de cargarse. */
 document.addEventListener('DOMContentLoaded', function () {
     // Cargar las promociones al cargar la página
-    loadPromotions();
+   
 
     // Manejar el evento de envío del formulario
     document.getElementById('addProductForm').addEventListener('submit', function (event) {
@@ -1454,3 +1468,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 </body>
 </html>
+
+
+
+

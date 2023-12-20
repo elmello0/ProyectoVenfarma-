@@ -1,6 +1,11 @@
-<!-- Este código   es un script PHP que se conecta a una base de datos MySQL y recupera datos de
-varias tablas. -->
+
 <?php
+
+
+/* <!-- Este código   es un script PHP que se conecta a una base de datos MySQL y recupera datos de
+varias tablas. -->*/
+
+
 // Parámetros de conexión
 $servername = "localhost";
 $username = "root";

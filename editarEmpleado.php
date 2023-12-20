@@ -1,5 +1,7 @@
-<!-- El código es un script PHP que procesa la edición de la información de un empleado. -->
+
 <?php
+
+/*<!-- El código es un script PHP que procesa la edición de la información de un empleado. --> */
 // procesar_edicion_empleado.php
 $servername = "localhost";
 $username = "root";

@@ -1,6 +1,7 @@
-<!-- El código proporcionado es un script PHP que se conecta a una base de datos MySQL y recupera los
-detalles de un producto según su ID. Aquí hay un desglose de lo que hace el código: -->
 <?php
+
+/*<!-- El código proporcionado es un script PHP que se conecta a una base de datos MySQL y recupera los
+detalles de un producto según su ID. Aquí hay un desglose de lo que hace el código: --> */
 
 // Datos de conexión a la base de datos
 $servername = "localhost";

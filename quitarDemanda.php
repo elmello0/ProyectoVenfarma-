@@ -1,4 +1,6 @@
-<!-- Este script PHP maneja la actualización de datos en una base de datos.
+
+<?php
+/*<!-- Este script PHP maneja la actualización de datos en una base de datos.
      - Incluye 'conexion.php' para la conexión a la base de datos.
      - Verifica si la solicitud es POST.
      - Recolecta y sanea el nombre de la demanda enviado por POST.
@@ -9,8 +11,7 @@
      - Si la cantidad es 0.100 o menor:
        - Envía una respuesta JSON sugiriendo la posible eliminación de la demanda.
      - Si la solicitud no es POST, envía un error.
-     - Cierra la conexión a la base de datos al final. -->
-<?php
+     - Cierra la conexión a la base de datos al final. -->*/
 // Incluyo el archivo de conexión a la base de datos.
 include 'conexion.php';
 

@@ -1,4 +1,7 @@
-<!-- Este script PHP gestiona el proceso de inicio de sesión.
+
+<?php
+
+/*<!-- Este script PHP gestiona el proceso de inicio de sesión.
      - Incluye un archivo de conexión a la base de datos y comienza o reanuda una sesión.
      - Verifica si se ha enviado el formulario de login.
      - Recolecta el nombre de usuario y la contraseña del formulario.
@@ -6,8 +9,8 @@
      - Ejecuta la consulta y obtiene el resultado.
      - Si encuentra una coincidencia (un usuario con las credenciales proporcionadas), almacena el ID del rol en la sesión y redirige al usuario al menú de administrador.
      - Si las credenciales no coinciden, muestra un mensaje de error.
-     - Cierra el statement al final del proceso. -->
-<?php
+     - Cierra el statement al final del proceso. -->*/
+
 // Incluyo el archivo de conexión a la base de datos.
 include 'conexion.php';
 // Inicio o reanudo la sesión.

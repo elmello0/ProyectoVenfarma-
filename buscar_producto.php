@@ -1,6 +1,8 @@
-<!-- El código que proporcionó es un script PHP que se conecta a una base de datos, recupera datos según
-un término de búsqueda y devuelve los resultados en formato JSON. -->
+
 <?php
+/*<!-- El código que proporcionó es un script PHP que se conecta a una base de datos, recupera datos según
+un término de búsqueda y devuelve los resultados en formato JSON. -->*/
+
 // Conexión a la base de datos
 $servername = "localhost";
 $username = "root";

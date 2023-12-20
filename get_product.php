@@ -1,7 +1,9 @@
-<!--El código que proporcionó es un script PHP que se conecta a una base de datos MySQL, recupera datos
-de un producto específico según el ID pasado en la URL y devuelve los datos en formato JSON. -->
+
 <?php
 
+
+/*<!--El código que proporcionó es un script PHP que se conecta a una base de datos MySQL, recupera datos
+de un producto específico según el ID pasado en la URL y devuelve los datos en formato JSON. --> */
 $servername = "localhost";
 $username = "root";
 $password = "";
