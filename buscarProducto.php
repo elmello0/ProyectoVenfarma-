@@ -16,28 +16,22 @@ try {
     $terminoBusqueda = $_GET['terminoBusqueda'] ?? '';
     $criterioBusqueda = $_GET['criterio'] ?? 'nombre'; // Criterio de búsqueda predeterminado
 
-    // Determinar el campo por el cual buscar
-    switch ($criterioBusqueda) {
-        // Asegúrate de que los campos aquí coincidan con los nombres de las columnas en tu base de datos
-        case 'stock':
-            $campoBusqueda = 'p.stock';
-            break;
-        case 'promocion':
-            $campoBusqueda = 'prom.nombre';
-            break;
-        case 'categoria':
-            $campoBusqueda = 'cat.nombre';
-            break;
-        case 'familia':
-            $campoBusqueda = 'fam.nombre';
-            break;
-        case 'tipo':
-            $campoBusqueda = 'tipo.nombre';
-            break;
-        default:
-            $campoBusqueda = 'p.nombre';
-    }
+    // Mapeo seguro de criterios de búsqueda a nombres de columnas de base de datos
+    $allowedSearchFields = [
+        'nombre' => 'p.nombre',
+        'stock' => 'p.stock',
+        'precio' => 'p.precio',
+        'descuento' => 'prom.descuento',
+        'promocion' => 'prom.nombre',
+        'categoria' => 'cat.nombre',
+        'familia' => 'fam.nombre',
+        'tipo' => 'tipo.nombre',
+    ];
 
+    // Determinar el campo por el cual buscar de manera segura
+    $campoBusqueda = $allowedSearchFields[$criterioBusqueda] ?? 'p.nombre';
+
+    // Preparar la consulta SQL
     $sql = "SELECT p.idProducto, p.nombre, p.stock, p.precio, p.estado, 
            prom.estado AS estado_promocion, prom.nombre AS nombre_promocion, prom.descuento, 
            cat.nombre AS nombre_categoria, 
@@ -47,18 +41,30 @@ try {
     LEFT JOIN promocion prom ON p.promocion_idpromocion = prom.idpromocion
     LEFT JOIN categoria cat ON p.categoria_idcategoria = cat.idcategoria
     LEFT JOIN familia fam ON p.familia_idfamilia = fam.idfamilia
-    LEFT JOIN tipo tipo ON p.tipo_idtipo = tipo.idtipo
-    WHERE $campoBusqueda LIKE ?";
+    LEFT JOIN tipo tipo ON p.tipo_idtipo = tipo.idtipo";
+
+      if (in_array($criterioBusqueda, ['precio', 'stock', 'descuento'])) {
+        // Búsqueda que comienza con los dígitos proporcionados
+        $sql .= " WHERE {$campoBusqueda} LIKE ?";
+        $terminoBusqueda = $terminoBusqueda . '%';
+    } else {
+        // Búsqueda de texto con LIKE
+        $sql .= " WHERE {$campoBusqueda} LIKE ?";
+        $terminoLike = '%' . $terminoBusqueda . '%';
+    }
+
 
     $stmt = $conn->prepare($sql);
-    $terminoLike = '%' . $terminoBusqueda . '%';
-    $stmt->bindParam(1, $terminoLike, PDO::PARAM_STR);
+
+    if (in_array($criterioBusqueda, ['precio', 'stock', 'descuento'])) {
+        $stmt->bindParam(1, $terminoBusqueda);
+    } else {
+        $stmt->bindParam(1, $terminoLike, PDO::PARAM_STR);
+    }
+
     $stmt->execute();
 
     $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-    // Registro de depuración
-    error_log(print_r($productos, true)); // Esto agregará los productos al archivo de registro de PHP
 
     echo json_encode($productos);
 

@@ -5,14 +5,7 @@ hace: -->*/
 
 // descargar_pdf.php
 
-// Asumiendo que tienes una sesión iniciada y que en ella se almacena el ID del usuario
-session_start();
 
-// Verifico si el usuario está logueado. Si no, lo redirijo a la página de login.
-if (!isset($_SESSION['id'])) {
-    header("Location: login.php");
-    exit();
-}
 
 // Incluye tu archivo de conexión a la base de datos si es necesario
 include 'conexion.php';

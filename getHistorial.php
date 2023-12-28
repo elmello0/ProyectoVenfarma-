@@ -9,12 +9,6 @@ para facilitar la depuración. Realiza una consulta a la base de datos para obte
 y muestra un mensaje de error si la consulta falla. -->*/
 
 
-session_start();
-
-if(!isset($_SESSION['id'])){
-    header("Location: login.php");
-    exit();
-}
 
 // archivo de conexión a la base de datos
 include 'conexion.php';
@@ -118,14 +112,49 @@ function recargarTablaHistorial() {
 
 </head>
 <body>
-    <header>
-        <h4>Historial</h4>
-        <a href="menu_admin.php"><button>Menú Admin</button></a>
-        <a href="getProductos.php"><button>Productos</button></a>
-        <a href="getDemandas.php"><button>Demandas</button></a>
-        <a href="getHistorial.php"><button>Historial</button></a>
-        <a href="getEmpleados.php"><button>Empleados</button></a>
-    </header>
+<?php
+    session_start();
+
+    // Verificar si el usuario está logueado y tiene un rol asignado
+    if (!isset($_SESSION['role_name'])) {
+        header('Location: login.php'); // Redireccionar al login si no está logueado
+        exit();
+    }
+
+    $rolUsuario = $_SESSION['role_name']; // Obtener el rol del usuario
+    ?>
+<header>
+
+<!-- Menú dinámico según el rol -->
+<?php if ($rolUsuario == 'admin'): ?>
+  <h3>Venfarma
+    Historial</h3>
+  </h3>
+    <a href="menu_admin.php"><button>Menú</button></a>
+    <a href="getProductos.php"><button>Productos</button></a>
+    <a href="getDemandas.php"><button>Demandas</button></a>
+    <a href="getHistorial.php"><button>Historial</button></a>
+    <a href="getEmpleados.php"><button>Empleados</button></a>
+<?php elseif ($rolUsuario == 'empleado'): ?>
+  <h3>Venfarma
+    Empleado</h3>
+  </h3>
+    <a href="menu_admin.php"><button>Menú</button></a>
+    <a href="getProductos.php"><button>Productos</button></a>
+    <a href="getDemandas.php"><button>Demandas</button></a>
+    <a href="getHistorial.php"><button>Historial</button></a>
+<?php elseif ($rolUsuario == 'encargado'): ?>
+  <h3>Venfarma
+    Reabastecimientos</h3>
+  </h3>
+  <a href="menu_admin.php"><button>Menú</button></a>
+    <a href="getProductos.php"><button>Productos</button></a>
+    <a href="getDemandas.php"><button>Demandas</button></a>
+    <a href="getHistorial.php"><button>Historial</button></a>
+<?php else: ?>
+    <p>Rol no reconocido.</p>
+<?php endif; ?>
+</header>
 
     <!-- Botón para generar nuevo historial -->
     <button id="btn_generar_historial">Generar Historial</button>

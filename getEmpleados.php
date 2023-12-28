@@ -57,14 +57,49 @@ administración, productos, demandas, historial y empleados.  -->
     <link rel="stylesheet" href="assets/css/estilos_menu_admin.css">
 </head>
 <header>
-    Empleados
-    <header>
-        <a href="menu_admin.php"><button>Menú Admin</button></a>
-        <a href="getProductos.php"><button>Productos</button></a>
-        <a href="getDemandas.php"><button>Demandas</button></a>
-        <a href="getHistorial.php"><button>Historial</button></a>
-        <a href="getEmpleados.php"><button>Empleados</button></a>
-    </header>
+    <?php
+    session_start();
+
+    // Verificar si el usuario está logueado y tiene un rol asignado
+    if (!isset($_SESSION['role_name'])) {
+        header('Location: login.php'); // Redireccionar al login si no está logueado
+        exit();
+    }
+
+    $rolUsuario = $_SESSION['role_name']; // Obtener el rol del usuario
+    ?>
+<header>
+
+<!-- Menú dinámico según el rol -->
+<?php if ($rolUsuario == 'admin'): ?>
+  <h3>Venfarma
+    Empleados</h3>
+  </h3>
+    <a href="menu_admin.php"><button>Menú</button></a>
+    <a href="getProductos.php"><button>Productos</button></a>
+    <a href="getDemandas.php"><button>Demandas</button></a>
+    <a href="getHistorial.php"><button>Historial</button></a>
+    <a href="getEmpleados.php"><button>Empleados</button></a>
+<?php elseif ($rolUsuario == 'empleado'): ?>
+  <h3>Venfarma
+    Empleado</h3>
+  </h3>
+    <a href="menu_admin.php"><button>Menú</button></a>
+    <a href="getProductos.php"><button>Productos</button></a>
+    <a href="getDemandas.php"><button>Demandas</button></a>
+    <a href="getHistorial.php"><button>Historial</button></a>
+<?php elseif ($rolUsuario == 'encargado'): ?>
+  <h3>Venfarma
+    Reabastecimientos</h3>
+  </h3>
+  <a href="menu_admin.php"><button>Menú</button></a>
+    <a href="getProductos.php"><button>Productos</button></a>
+    <a href="getDemandas.php"><button>Demandas</button></a>
+    <a href="getHistorial.php"><button>Historial</button></a>
+<?php else: ?>
+    <p>Rol no reconocido.</p>
+<?php endif; ?>
+</header>
 </header>
 <div>
     <h1> </h1>

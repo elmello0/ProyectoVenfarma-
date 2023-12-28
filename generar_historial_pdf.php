@@ -82,23 +82,25 @@ $contenido = "<h1>Reporte de Cambios</h1>";
 // Incluir cambios en demanda si los hay
 $contenido .= "<h2>Cambios en Demanda</h2>";
 if (mysqli_num_rows($resultadoDemanda) > 0) {
-    $contenido .= "<ul>";
     while ($demanda = mysqli_fetch_assoc($resultadoDemanda)) {
-        $contenido .= "<li>Nombre: " . htmlspecialchars($demanda['nombre']) .
-                       ", Cantidad: " . htmlspecialchars($demanda['cantidad']) .
-                       ", Descripción: " . htmlspecialchars($demanda['descripcion']) . "</li>";
+        // Convierte la cantidad a un entero antes de imprimir
+        $cantidadEntera = intval($demanda['cantidad']);
+        
+        // Estructura la información en líneas separadas para mejorar la legibilidad
+        $contenido .= "<strong>Nombre:</strong> " . htmlspecialchars($demanda['nombre']) . "<br/>";
+        $contenido .= "<strong>Cantidad:</strong> " . htmlspecialchars($cantidadEntera) . "<br/>";
+        $contenido .= "<strong>Descripción:</strong> " . htmlspecialchars($demanda['descripcion']) . "<br/><br/>";
     }
-    $contenido .= "</ul>";
 } else {
     $contenido .= "<p>No hay cambios en demandas para el día de hoy.</p>";
 }
+
 
 
 // Incluir cambios en productos si los hay
 /* El código genera una lista de cambios en los productos. */
 $contenido .= "<h2>Cambios en Productos</h2>";
 if (mysqli_num_rows($resultadoProducto) > 0) {
-    $contenido .= "<ul>";
     while ($producto = mysqli_fetch_assoc($resultadoProducto)) {
         // Obtén información adicional de otras tablas
         $promocionInfo = obtenerInformacionAdicional($con, 'promocion', 'idpromocion', $producto['promocion_idpromocion'], ['nombre', 'estado']);
@@ -107,18 +109,18 @@ if (mysqli_num_rows($resultadoProducto) > 0) {
         $tipoInfo = obtenerNombreAdicional($con, 'tipo', 'idtipo', $producto['tipo_idtipo']);
         $demandaInfo = obtenerInformacionAdicional($con, 'demanda', 'iddemanda', $producto['demanda_iddemanda'], ['nombre', 'estado']);
 
-        $contenido .= "<li>Nombre: " . htmlspecialchars($producto['nombre']) .
-                       ", Stock: " . htmlspecialchars($producto['stock']) .
-                       ", Precio: " . htmlspecialchars($producto['precio']) .
-                       ", Estado: " . htmlspecialchars($producto['estado']) .
-                       ", Promocion: " . htmlspecialchars($promocionInfo['nombre']) . " - Estado: " . htmlspecialchars($promocionInfo['estado']) .
-                       ", Categoria: " . htmlspecialchars($categoriaInfo) .
-                       ", Familia: " . htmlspecialchars($familiaInfo) .
-                       ", Tipo: " . htmlspecialchars($tipoInfo) .
-                       ", Demanda: " . htmlspecialchars($demandaInfo['nombre']) . " - Estado: " . htmlspecialchars($demandaInfo['estado']) .
-                       ", Fecha de Modificación: " . htmlspecialchars($producto['fecha_modificacion']) . "</li>";
+        // Estructura la información en líneas separadas para mejorar la legibilidad
+        $contenido .= "<strong>Nombre:</strong> " . htmlspecialchars($producto['nombre']) . "<br/>";
+        $contenido .= "<strong>Stock:</strong> " . htmlspecialchars($producto['stock']) . "<br/>";
+        $contenido .= "<strong>Precio:</strong> " . htmlspecialchars($producto['precio']) . "<br/>";
+        $contenido .= "<strong>Estado:</strong> " . htmlspecialchars($producto['estado']) . "<br/>";
+        $contenido .= "<strong>Promoción:</strong> " . htmlspecialchars($promocionInfo['nombre']) . " - Estado: " . htmlspecialchars($promocionInfo['estado']) . "<br/>";
+        $contenido .= "<strong>Categoría:</strong> " . htmlspecialchars($categoriaInfo) . "<br/>";
+        $contenido .= "<strong>Familia:</strong> " . htmlspecialchars($familiaInfo) . "<br/>";
+        $contenido .= "<strong>Tipo:</strong> " . htmlspecialchars($tipoInfo) . "<br/>";
+        $contenido .= "<strong>Demanda:</strong> " . htmlspecialchars($demandaInfo['nombre']) . " - Estado: " . htmlspecialchars($demandaInfo['estado']) . "<br/>";
+        $contenido .= "<strong>Fecha de Modificación:</strong> " . htmlspecialchars($producto['fecha_modificacion']) . "<br/><br/>";
     }
-    $contenido .= "</ul>";
 } else {
     $contenido .= "<p>No hay cambios en productos para el día de hoy.</p>";
 }

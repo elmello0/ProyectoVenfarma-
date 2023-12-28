@@ -1,50 +1,53 @@
-
 <?php
+// login.php
+session_start(); 
+include 'db_config.php'; 
 
-/*<!-- Este script PHP gestiona el proceso de inicio de sesión.
-     - Incluye un archivo de conexión a la base de datos y comienza o reanuda una sesión.
-     - Verifica si se ha enviado el formulario de login.
-     - Recolecta el nombre de usuario y la contraseña del formulario.
-     - Prepara una consulta SQL para verificar estas credenciales en la base de datos.
-     - Ejecuta la consulta y obtiene el resultado.
-     - Si encuentra una coincidencia (un usuario con las credenciales proporcionadas), almacena el ID del rol en la sesión y redirige al usuario al menú de administrador.
-     - Si las credenciales no coinciden, muestra un mensaje de error.
-     - Cierra el statement al final del proceso. -->*/
+// Verificar si el formulario ha sido enviado
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $rolNombre = $_POST['Usuario'];
+    $password = $_POST['Password']; 
 
-// Incluyo el archivo de conexión a la base de datos.
-include 'conexion.php';
-// Inicio o reanudo la sesión.
-session_start();
+    // Crear conexión PDO
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbUsername, $dbPassword);
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-// Verifico si se envió el formulario de login.
-if(isset($_POST['login'])){
-    // Recojo el nombre de usuario y la contraseña del formulario.
-    $usuario = $_POST['Usuario'];
-    $password = $_POST['Password'];
+    // Preparar la consulta para verificar el rol y la contraseña
+    $stmt = $conn->prepare("SELECT idrol, nombre FROM rol WHERE nombre = :rolNombre AND contraseña = :password");
+    $stmt->bindParam(':rolNombre', $rolNombre);
+    $stmt->bindParam(':password', $password);
 
-    // Preparo la consulta SQL para verificar el usuario y la contraseña.
-    $stmt = $con->prepare("SELECT idrol FROM rol WHERE nombre=? AND contraseña=?");
-    $stmt->bind_param('ss', $usuario, $password);
     $stmt->execute();
-    $result = $stmt->get_result();
 
-    // Verifico si las credenciales son correctas.
-    if($result->num_rows == 1){
-        // Obtengo el ID del rol y lo guardo en la sesión.
-        $row = $result->fetch_assoc();
-        $_SESSION['id'] = $row['idrol']; 
-        // Redirijo al usuario al menú de administrador.
-        header("Location: menu_admin.php");
-        exit;
+    if ($stmt->rowCount() == 1) {
+        // Si el rol existe
+        $rol = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Guardar datos en la sesión
+        $_SESSION['role_id'] = $rol['idrol'];
+        $_SESSION['role_name'] = $rol['nombre'];
+
+        // Redireccionar según el rol
+        if ($rolNombre == 'admin') {
+            header('Location: menu_admin.php');
+            exit();
+        } elseif ($rolNombre == 'empleado') {
+            header('Location: menu_admin.php');
+            exit();
+        } elseif ($rolNombre == 'encargado') {
+            header('Location: menu_admin.php');
+            exit();
+        } else {
+            // Si el rol no es reconocido
+            header('Location: login.php?error=rol_desconocido');
+            exit();
+        }
     } else {
-        // Muestro un mensaje de error si las credenciales son incorrectas.
-        echo "Usuario o contraseña incorrectos";
+        // Si las credenciales son incorrectas
+        header('Location: login.php?error=credenciales_incorrectas');
+        exit();
     }
-
-    // Cierro el statement.
-    $stmt->close();
 }
-
 ?>
 <!-- Este documento HTML define una página de inicio de sesión.
      - Incluye metadatos estándar en el encabezado como el conjunto de caracteres, el viewport y el título de la página.
@@ -56,20 +59,19 @@ if(isset($_POST['login'])){
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Configuro el encabezado de la página con charset, viewport y título. -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <!-- Incluyo los estilos CSS para la página. -->
+   
     <link rel="stylesheet" href="assets/css/estilos_login.css">
 </head>
 
 <body>
-    <!-- Creo el formulario de login. -->
+   
     <div class="login-container">
         <h1>Venfarma</h1>
         <div class="icon-container">
-            <img src="/imagenes/baseline_account_circle_black_48dp.png" alt="Ícono de usuario">
+            <img src="/img/baseline_account_circle_black_48dp.png" alt="Ícono de usuario">
         </div>
         <form action="login.php" method="post">
             <input type="text" name="Usuario" placeholder="Nombre de usuario" required>

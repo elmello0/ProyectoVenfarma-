@@ -1,4 +1,3 @@
-
 <?php
 /*<!--Este código   es un script PHP que se conecta a una base de datos MySQL y recupera datos de una
 tabla llamada "demanda". Luego procesa los datos para crear una matriz adecuada para generar un
@@ -44,49 +43,495 @@ try {
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Metadatos y referencias a hojas de estilo y scripts -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú Admin</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="assets/css/estilos_menu_admin.css">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
-
 <body>
     <header>
-    <h4>Demandas</h4>
-        <a href="menu_admin.php"><button>Menú Admin</button></a>
+        <?php
+        // Inicio de sesión y verificación de autenticación del usuario
+        session_start();
+
+        // Verificar si el usuario está logueado y tiene un rol asignado
+        if (!isset($_SESSION['role_name'])) {
+            header('Location: login.php'); // Redireccionar al login si no está logueado
+            exit();
+        }
+
+        $rolUsuario = $_SESSION['role_name']; // Obtener el rol del usuario
+        ?>
+    </header>
+
+    <!-- Menú dinámico según el rol del usuario -->
+    <header>
+    <?php if ($rolUsuario == 'admin'): ?>
+        <h3>Venfarma Demandas</h3>
+        <!-- Enlaces para el administrador -->
+        <a href="menu_admin.php"><button>Menú</button></a>
         <a href="getProductos.php"><button>Productos</button></a>
         <a href="getDemandas.php"><button>Demandas</button></a>
         <a href="getHistorial.php"><button>Historial</button></a>
         <a href="getEmpleados.php"><button>Empleados</button></a>
+    <?php elseif ($rolUsuario == 'empleado'): ?>
+        <h3>Venfarma Empleado</h3>
+        <!-- Enlaces para el empleado -->
+        <a href="menu_admin.php"><button>Menú</button></a>
+        <a href="getProductos.php"><button>Productos</button></a>
+        <a href="getDemandas.php"><button>Demandas</button></a>
+        <a href="getHistorial.php"><button>Historial</button></a>
+    <?php elseif ($rolUsuario == 'encargado'): ?>
+        <h3>Venfarma Reabastecimientos</h3>
+        <!-- Enlaces para el encargado -->
+        <a href="menu_admin.php"><button>Menú</button></a>
+        <a href="getProductos.php"><button>Productos</button></a>
+        <a href="getDemandas.php"><button>Demandas</button></a>
+        <a href="getHistorial.php"><button>Historial</button></a>
+    <?php else: ?>
+        <!-- Mensaje en caso de rol no reconocido -->
+        <p>Rol no reconocido.</p>
+    <?php endif; ?>
     </header>
-    <div>
-    <div>
-        <h1> </h1>
-        <h1> </h1>
-        <h1> </h1>
+
+    <!-- Contenedor para el gráfico de ECharts -->
+    <div id="bar_chart" style="width: 100%; height: 500px;"></div>
+
+    <!-- Botones para las acciones -->
+    <div id="buttonsContainer" style="min-height: 50px;">
+        <div id="buttons" style="display: none;">
+            <button onclick="quitarDemanda()">Quitar</button>
+            <button onclick="anadirDemanda()">Añadir</button>
+            <button id="botonMostrarDescripcion" style="display: none;" onclick="mostrarDescripcion(selectedDemandName)">Mostrar Descripción</button>
+        </div>
     </div>
-</div>
 </body>
 </html>
-<div>
-    <div>
+<script type="text/javascript">
+    // Variables globales para almacenar información seleccionada y configurar el gráfico
+    var selectedDemandName = null; // Almacena el nombre de la demanda seleccionada
+    var selectedIndex = -1; // Índice seleccionado en el gráfico
+    var myChart = echarts.init(document.getElementById('bar_chart')); // Inicializa el gráfico de ECharts
 
-    </div>
-</div>
+    // Datos para el gráfico obtenidos de PHP
+    var datosDelGrafico = <?php echo $jsonParaGrafico; ?>;
+    var nombres = datosDelGrafico.map(function(item) { return item[0]; }).slice(1);
+    var cantidades = datosDelGrafico.map(function(item) { return item[1]; }).slice(1);
+
+    // Configuración del gráfico
+    var option = {
+        title: { text: 'Demanda de Productos' },
+        tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+        xAxis: { type: 'category', data: nombres, axisLabel: { rotate: 45, interval: 0 } },
+        yAxis: { type: 'value' },
+        series: [{ name: 'Cantidad', type: 'bar', data: cantidades, barWidth: '60%' }]
+    };
+    myChart.setOption(option);
+
+    // Ejecución una vez que el documento esté listo
+    $(document).ready(function() {
+        // Configuración del modal de descripción
+        $('#modalDescripcion').modal({ backdrop: 'static', keyboard: true, show: false });
+
+        // Manejo de clics en el gráfico
+        myChart.on('click', function (params) {
+            if (params.componentType === 'series') {
+                if (selectedIndex !== params.dataIndex) {
+                    highlightBar(params.dataIndex);
+                    selectedIndex = params.dataIndex;
+                    $('#buttons').show();
+                    document.getElementById('botonMostrarDescripcion').style.display = 'block';
+                    selectedDemandName = params.name;
+                } else {
+                    highlightBar(null);
+                    selectedIndex = -1;
+                    ocultarElementos();
+                }
+            } else {
+                highlightBar(null);
+                selectedIndex = -1;
+                ocultarElementos();
+            }
+        });
+
+        // Mostrar modal con descripción al hacer clic en el botón
+        $('#botonMostrarDescripcion').click(function() {
+            if (selectedDemandName) {
+                document.getElementById('nombreBarraSeleccionada').innerText = selectedDemandName;
+                mostrarModal('modalDescripcion')
+                mostrarDescripcion(selectedDemandName);
+            }
+        });
+
+        // Manejadores para cerrar el modal
+        $('.cerrar, .modal-close').click(function() {
+            $('#modalDescripcion').modal('hide');
+        });
+
+        // Remover el fondo del modal al cerrarlo
+        $('#modalDescripcion').on('hidden.bs.modal', function () {
+            $('.modal-backdrop').remove();
+        });
+    });
+
+    // Función para resaltar o desresaltar una barra en el gráfico
+    function highlightBar(index) {
+        myChart.dispatchAction({
+            type: index !== null ? 'highlight' : 'downplay',
+            seriesIndex: 0,
+            dataIndex: index
+        });
+    }
+/**
+ * Realiza una solicitud AJAX para obtener la descripción de una demanda y muestra la descripción en un modal.
+ *
+ * @param {string} nombreSeleccionado - El nombre de la demanda para la cual se obtendrá la descripción.
+ * @returns {void}
+ */
+    function mostrarDescripcion(nombreSeleccionado) {
+        $.ajax({
+            url: 'obtenerDescripcionDemanda.php',
+            type: 'GET',
+            data: { nombre: nombreSeleccionado },
+            success: function(respuesta) {
+                document.getElementById('textoDescripcion').innerText = respuesta;
+                $('#modalDescripcion').modal('show');
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error al obtener la descripción:', textStatus, errorThrown);
+                alert('Error al obtener la descripción: ' + textStatus);
+            }
+        });
+    }
+/**
+ * Cierra el modal que se muestra para la descripción de la demanda.
+ *
+ * @returns {void}
+ */
+    function cerrarModal() {
+        $('#modalDescripcion').modal('hide');
+    }
+/**
+ * Oculta varios elementos, incluidos los botones en una interfaz de usuario.
+ *
+ * @returns {void}
+ */
+    function ocultarElementos() {
+    $('#buttons').hide();
+    $('#botonMostrarDescripcion').hide();
+    $('#botonQuitar').hide();
+    $('#botonAnadir').hide();
+}
+    /**
+ * Actualiza la visibilidad de los botones según el nombre de la demanda seleccionada.
+ *
+ * @param {string} nombre - El nombre de la demanda seleccionada.
+ * @returns {void}
+ */
+    function handleDemandUpdate(nombre) {
+        selectedDemandName = nombre;
+        if (selectedDemandName) {
+            $('#buttons').show(); 
+        } else {
+            $('#buttons').hide();
+        }
+    }
+/**
+ * Realiza una solicitud AJAX para obtener datos actualizados y actualiza un gráfico con esos datos.
+ *
+ * @returns {void}
+ */
+    function actualizarGrafico() {
+    $.ajax({
+        url: 'obtenerDatosGrafico.php',
+        type: 'GET',
+        dataType: 'json',
+        cache: false,
+        success: function(data) {
+            var nombres = data.map(function (item) { return item[0]; }).slice(1);
+            var cantidades = data.map(function (item) {
+                var cantidad = Math.floor(item[1]);
+                return cantidad > 0 ? cantidad : 0.1;
+            }).slice(1);
+
+            myChart.setOption({
+                xAxis: {
+                    data: nombres
+                },
+                series: [{
+                    data: cantidades
+                }]
+            });
+
+            if (selectedDemandName) {
+                handleDemandUpdate(selectedDemandName);
+            }
+        },
+        error: function(xhr, status, error) {
+            alert("Error al obtener los datos actualizados: " + error);
+        }
+    });
+}
+
+/**
+ * Realiza una acción para quitar una demanda.
+ *
+ * @returns {void}
+ */
+function quitarDemanda() {
+    if (selectedDemandName) {
+        // Aquí debes obtener la cantidad que se va a quitar, ejemplo: 1
+        var cantidadAQuitar = 1; // Esta cantidad puede variar según tu lógica de negocio
+
+        $.ajax({
+            url: 'quitarDemanda.php',
+            type: 'POST',
+            data: { nombre: selectedDemandName },
+            success: function(response) {
+                var data = JSON.parse(response);
+                if (data.success) {
+                    actualizarGrafico();
+                    agregarAlHistorial(cantidadAQuitar, selectedDemandName, false);
+                } else if (data.deletePrompt) {
+                    if (confirm(data.message)) {
+                        eliminarDemandaCompletamente();
+                    }
+                } else {
+                    alert("Error: " + data.error);
+                }
+            },
+            error: function(xhr, status, errorThrown) {
+                alert("Error al intentar disminuir la demanda: " + errorThrown);
+            }
+        });
+    }
+}
+/**
+ * Realiza una acción para eliminar completamente una demanda.
+ *
+ * @returns {void}
+ */
+    function eliminarDemandaCompletamente() {
+        $.ajax({
+            url: 'comprobarYEliminarDemanda.php', 
+            type: 'POST',
+            data: { nombre: selectedDemandName },
+            success: function(response) {
+                var data = JSON.parse(response);
+                if (data.success) {
+                    actualizarGrafico();
+                } else {
+                    alert("Error al eliminar la demanda: " + data.error);
+                }
+            },
+            error: function(xhr, status, errorThrown) {
+                alert("Error al intentar eliminar la demanda: " + errorThrown);
+            }
+        });
+    }
+/**
+ * Realiza una acción para añadir una demanda.
+ *
+ * @returns {void}
+ */
+    function anadirDemanda() {
+    if (selectedDemandName) {
+        var cantidadAAnadir = 1; 
+
+        $.ajax({
+            url: 'anadirDemanda.php',
+            type: 'POST',
+            dataType: 'json',
+            cache: false,
+            data: { nombre: selectedDemandName },
+            success: function(data) {
+                if(data.success) {
+                    handleDemandUpdate(selectedDemandName); 
+                    actualizarGrafico();
+                    agregarAlHistorial(cantidadAAnadir, selectedDemandName, true);
+                } else {
+                    alert("Error: " + data.error);
+                }
+            },
+            error: function(xhr, status, errorThrown) {
+                alert("Error al añadir demanda: " + errorThrown);
+            }
+        });
+    }
+}
+/**
+ * Realiza una acción para eliminar una demanda.
+ */
+    function eliminarDemanda() {
+        if (selectedDemandName) {
+            $.ajax({
+                url: 'eliminarDemanda.php',
+                type: 'POST',
+                data: { nombre: selectedDemandName },
+                success: function(response) {
+                    var data = JSON.parse(response);
+                    if(data.success) {
+                        handleDemandUpdate(null); 
+                        actualizarGrafico();
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                },
+                error: function(xhr, status, errorThrown) {
+                    alert("Error al eliminar demanda: " + errorThrown);
+                }
+            });
+        }
+    }
+    // Inicializa el historial de movimientos como un arreglo vacío
+var historialMovimientos = [];
+
+// Función para añadir un movimiento al historial
+function agregarAlHistorial(cantidad, nombre, esAñadido) {
+    // Determina la acción basada en si se añadió o quitó la cantidad
+    var accion = esAñadido ? 'Añadido +' : 'Quitado -';
+    // Construye el texto del movimiento
+    var movimiento = accion + Math.abs(cantidad) + ' en ' + nombre;
+
+    // Añade el movimiento al inicio del historial
+    historialMovimientos.unshift(movimiento);
+    // Asegúrate de que solo los últimos 5 movimientos estén en el historial
+    historialMovimientos = historialMovimientos.slice(0, 5);
+    // Actualiza la visualización del historial
+    mostrarHistorial();
+}
+
+// Función para mostrar el historial en la página
+function mostrarHistorial() {
+    var lista = $('#listaMovimientos');
+    lista.empty(); // Limpia la lista actual
+    historialMovimientos.forEach(function(mov) {
+        // Crea un elemento de lista para cada movimiento
+        lista.append('<li>' + mov + '</li>');
+    });
+}
+/**
+     * Vincula un evento de clic al botón 'btnEditarDescripcion'. Cuando se hace clic en el botón,
+     * obtiene la descripción actual del elemento 'textoDescripcion', la coloca en el área de texto
+     * 'editarTextoDescripcion' para su edición, y muestra el modal 'modalEditarDescripcion' para la edición.
+     */
+    $('#btnEditarDescripcion').click(function() {
+        var descripcionActual = $('#textoDescripcion').text(); // Obtiene la descripción actual
+        $('#editarTextoDescripcion').val(descripcionActual); // Coloca la descripción en el área de texto
+        $('#modalEditarDescripcion').show(); // Muestra el modal para editar
+    });
+
+    /**
+     * Función para cerrar el modal 'modalEditarDescripcion'.
+     * Se llama para ocultar el modal una vez que la edición se ha completado o cancelado.
+     */
+    function cerrarModalEditar() {
+        $('#modalEditarDescripcion').hide();
+    }
+
+    /**
+     * Función que guarda la descripción editada. Envía una solicitud AJAX al servidor para actualizar la
+     * descripción en la base de datos. En caso de éxito, actualiza la descripción mostrada en el modal,
+     * recarga el gráfico y cierra el modal de edición.
+     */
+    function guardarDescripcionEditada() {
+        var nuevaDescripcion = $('#editarTextoDescripcion').val(); // Obtiene la nueva descripción del área de texto
+
+        $.ajax({
+            url: 'editar_desc_demanda.php', // URL del script PHP para procesar la actualización
+            type: 'POST',
+            data: {
+                nombre: selectedDemandName, // Nombre de la demanda seleccionada
+                nuevaDescripcion: nuevaDescripcion // Nueva descripción a guardar
+            },
+            success: function(response) {
+                $('#textoDescripcion').text(nuevaDescripcion); // Actualiza la descripción en la interfaz
+                actualizarGrafico(); // Llama a función para actualizar el gráfico
+                cerrarModalEditar(); // Cierra el modal de edición
+            },
+            error: function() {
+                alert('Error al guardar los cambios'); // Notifica al usuario en caso de error
+            }
+        });
+    }
+
+    /**
+     * Código que se ejecuta una vez que el documento está completamente cargado.
+     * Vuelve a vincular el evento de clic al botón 'btnEditarDescripcion' para manejar la edición de la descripción.
+     * Este código parece duplicar la funcionalidad ya definida fuera de $(document).ready, y podría ser redundante.
+     */
+    $(document).ready(function() {
+        $('#btnEditarDescripcion').click(function() {
+            var descripcionActual = $('#textoDescripcion').text();
+            $('#editarTextoDescripcion').val(descripcionActual);
+            $('#modalEditarDescripcion').show();
+        });
+    });
+</script>
+
+<!DOCTYPE html>
+<html lang="es">
 <head>
+    <!-- Metadatos y referencias a hojas de estilo -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Admin</title>
+    <link rel="stylesheet" href="assets/css/estilos_menu_admin.css">
+</head>
+<body>
+    <!-- Contenedor Principal del Menú Admin -->
+    <div id="contenedorPrincipal">
+        <!-- Contenedor del Gráfico de Historial y Listado de Movimientos -->
+        <div id="contenedorGraficoHistorial">
+            <div id="bar_chart"></div> <!-- Espacio para el gráfico de barras -->
+            <div id="historialMovimientos">
+                <h3>Historial de Movimientos</h3>
+                <ul id="listaMovimientos"></ul> <!-- Lista para mostrar movimientos -->
+            </div>
+        </div>
+        <button id="btnAgregarDemanda">Agregar Demanda</button> <!-- Botón para agregar demanda -->
+    </div>
 
-<!--Este código   crea un modal en HTML usando clases CSS. El modal contiene un formulario con
-campos de entrada para nombre, fecha, descripción, estado y cantidad. El formulario también tiene un
-botón de enviar para registrar una demanda. -->
+    <!-- Botón oculto para mostrar descripción -->
+    <button id="botonMostrarDescripcion" style="display: none;">Mostrar Descripción</button>
+    
+    <!-- Modal para mostrar la descripción de una demanda -->
+    <div id="modalDescripcion" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h4>Descripción de la Demanda</h4>
+            <p id="nombreBarra"><b>de:</b> <span id="nombreBarraSeleccionada"></span></p>
+            <p id="textoDescripcion">Aquí va la descripción...</p>
+            <button id="btnEditarDescripcion">Editar</button> <!-- Botón para editar descripción -->
+        </div>
+        <div class="modal-footer">
+            <button class="modal-close">Cerrar</button> <!-- Botón para cerrar el modal -->
+        </div>
+    </div>
 
-<!-- El Modal -->
+    <!-- Modal para editar la descripción de una demanda -->
+    <div id="modalEditarDescripcion" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h4>Editar Descripción de la Demanda</h4>
+            <textarea id="editarTextoDescripcion"></textarea> <!-- Área de texto para edición -->
+            <button onclick="guardarDescripcionEditada()">Guardar Cambios</button> <!-- Botón para guardar cambios -->
+        </div>
+        <div class="modal-footer">
+            <button class="modal-close">Cerrar</button> <!-- Botón para cerrar el modal -->
+        </div>
+    </div>
 
-<div id="miModal" class="modal">
-        <!-- Contenido del modal -->
+    <!-- Modal para registrar una nueva demanda -->
+    <div id="miModal" class="modal">
         <div class="modal-contenido">
-            <span class="cerrar">&times;</span>
+            <span class="cerrar">&times;</span> <!-- Botón para cerrar el modal -->
             <form id="formularioDemanda">
+                <!-- Formulario para registrar demanda -->
                 <label for="nombre">Nombre:</label>
                 <input type="text" id="nombre" name="nombre"><br><br>
                 <label for="fecha">Fecha:</label>
@@ -104,492 +549,270 @@ botón de enviar para registrar una demanda. -->
             </form>
         </div>
     </div>
-
-    <title>Gráfico de Demandas</title>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="text/javascript">
-
-/* Este código   utiliza la biblioteca de Google Charts para crear un gráfico de barras. Está
-cargando los paquetes necesarios y configurando una función de devolución de llamada para dibujar el
-gráfico. La función `drawChart` toma datos para el gráfico y los formatea. Luego establece varias
-opciones para el gráfico, como el título, los colores, las etiquetas de los ejes y la animación.
-Finalmente, crea el gráfico utilizando los datos y opciones especificados. */
-        google.charts.load('current', {'packages':['bar']});
-        google.charts.setOnLoadCallback(drawChart);
-
-        var selectedDemandName = null;
-
-        function drawChart(datosDelGrafico) {
-    var data = google.visualization.arrayToDataTable(datosDelGrafico || <?php echo $jsonParaGrafico; ?>);
-
-    var formatter = new google.visualization.NumberFormat({ 
-        fractionDigits: 0
-    });
-    formatter.format(data, 1);
+</body>
+</html>
 
 
-    var options = {
-
-        title: 'Demanda de Productos', 
-        titleTextStyle: {
-            color: '#4a4a4a',
-            fontSize: 18,
-            bold: true
-        },
-
-        colors: ['#1b9e77', '#d95f02', '#7570b3'],
-
-        vAxis: {
-            title: 'Cantidad',
-            titleTextStyle: {
-                color: '#4a4a4a',
-                fontSize: 14,
-                bold: true
-            },
-            minValue: 0,
-            viewWindow: {
-                min: 0
-            },
-            format: '#',
-            textStyle: {
-                fontSize: 12
-            }
-        },
-
-        hAxis: {
-            textStyle: {
-                fontSize: 12
-            }
-        },
-
-        legend: {
-            position: 'none'
-        },
- 
-        animation: {
-            startup: true,
-            duration: 1000,
-            easing: 'out'
-        },
-
-        chartArea: {
-            width: '80%',
-            height: '70%'
-        }
-    };
-
-/* Este código   crea un gráfico de barras utilizando la biblioteca de Google Charts en PHP. Luego
-agrega un detector de eventos al gráfico para manejar la selección de una barra. Cuando se
-selecciona una barra, recupera el valor de la barra seleccionada y realiza algunas acciones, como
-mostrar botones y mostrar una descripción. */
-    //Gráfico de Barras
-    var chart = new google.charts.Bar(document.getElementById('bar_chart'));
-    chart.draw(data, google.charts.Bar.convertOptions(options));
-
-    //seleccion del grafico de barras
-    google.visualization.events.addListener(chart, 'select', function() {
-    var selection = chart.getSelection();
-    if (selection.length) {
-        var row = selection[0].row;
-        selectedDemandName = data.getValue(row, 0);
-        // botones y botón de descripción.
-        $('#buttons').show();
-        document.getElementById('botonMostrarDescripcion').style.display = 'block';
-    } else {
-        // No hay selección, por lo que se ocultan los botones.
-        $('#buttons').hide();
-        document.getElementById('botonMostrarDescripcion').style.display = 'none';
+    <script>
+    /**
+     * Hace visibles los botones al cambiar su propiedad de visibilidad.
+     */
+    function mostrarBotones() {
+        document.getElementById('buttons').style.visibility = 'visible';
     }
-    });
-}
-
-/**
- * Este código   es una función PHP que realiza una solicitud AJAX para obtener una descripción de
- * una demanda y la muestra en un modal.
- */
-function mostrarDescripcion() {
-    $.ajax({
-        url: 'obtenerDescripcionDemanda.php',
-        type: 'GET',
-        data: { nombre: selectedDemandName },
-        success: function(respuesta) {
-            document.getElementById('textoDescripcion').innerText = respuesta;
-            document.getElementById('modalDescripcion').style.display = "block";
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-            console.error('Error al obtener la descripción:', textStatus, errorThrown);
-            alert('Error al obtener la descripción: ' + textStatus);
-        }
-    });
-}
-
-function cerrarModal() {
-  $('#modalDescripcion').hide();
-}
-
-        function handleDemandUpdate(nombre) {
-    selectedDemandName = nombre;
-    if (selectedDemandName) {
-        $('#buttons').show(); 
-    } else {
-        $('#buttons').hide();
+    /**
+     * Oculta los botones al cambiar su propiedad de visibilidad.
+     */
+    function ocultarBotones() {
+        document.getElementById('buttons').style.visibility = 'hidden';
     }
-}
-/**
- * La función "actualizarGrafico" realiza una solicitud AJAX para obtener datos actualizados para un
- * gráfico y luego llama a la función "drawChart" para mostrar el gráfico actualizado.
- */
-function actualizarGrafico() {
-    $.ajax({
-        url: 'obtenerDatosGrafico.php',
-        type: 'GET',
-        dataType: 'json',
-        cache: false,
-        success: function(data) {
-            for (var i = 1; i < data.length; i++) {
-                if (data[i][1] === 0.001) {
-                    data[i][1] = 0;
-                }
-            }
-            drawChart(data);
 
-            if (selectedDemandName) {
-                handleDemandUpdate(selectedDemandName);
-            }
-        },
-        error: function(xhr, status, error) {
-            alert("Error al obtener los datos actualizados: " + error);
+    // Referencia al modal en el documento
+    var modal = document.getElementById("miModal");
+
+    // Referencia al botón que activa el modal
+    var btn = document.getElementById("btnAgregarDemanda");
+
+    // Referencia al elemento que cierra el modal (botón con clase 'cerrar')
+    var span = document.getElementsByClassName("cerrar")[0];
+
+    /**
+     * Manejador de eventos para abrir el modal.
+     * Se activa al hacer clic en el botón 'btnAgregarDemanda'.
+     */
+    btn.onclick = function() {
+        modal.style.display = "block";
+    }
+
+    /**
+     * Manejador de eventos para cerrar el modal.
+     * Se activa al hacer clic en el elemento con clase 'cerrar'.
+     */
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    /**
+     * Manejador de eventos para cerrar el modal al hacer clic fuera de él.
+     * Se activa al hacer clic en cualquier lugar fuera del modal.
+     */
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
         }
-    });
-}
-/**
- * La función "quitarDemanda" envía una solicitud para disminuir la cantidad de una demanda, y si la
- * cantidad alcanza un cierto umbral, solicita al usuario confirmación para eliminar la demanda por
- * completo.
- */
+    }
 
-function quitarDemanda() {
-    if (selectedDemandName) {
-        // solicitud para disminuir la cantidad
+    /**
+     * Manejador de eventos para el formulario de demanda.
+     * Evita la recarga de la página y envía los datos mediante una solicitud AJAX.
+     * Muestra alertas basadas en la respuesta del servidor.
+     */
+    document.getElementById('formularioDemanda').onsubmit = function(event) {
+        event.preventDefault();
+
         $.ajax({
-            url: 'quitarDemanda.php',
+            url: 'guardarDemanda.php', // URL del script del servidor que procesa la demanda
             type: 'POST',
-            data: { nombre: selectedDemandName },
+            data: $(this).serialize(), // Envía los datos del formulario
             success: function(response) {
+                // Procesa la respuesta del servidor
                 var data = JSON.parse(response);
                 if (data.success) {
-                    actualizarGrafico();
-                } else if (data.deletePrompt) {
-                    // Si la cantidad llega a 0.100, muestra la confirmación de eliminación
-                    if (confirm(data.message)) {
-                        eliminarDemandaCompletamente();
-                    }
+                    alert('Demanda agregada correctamente');
+                    actualizarGrafico(); // Actualiza el gráfico tras agregar la demanda
                 } else {
-                    alert("Error: " + data.error);
+                    alert('Error al agregar demanda: ' + data.error);
                 }
             },
             error: function(xhr, status, errorThrown) {
-                alert("Error al intentar disminuir la demanda: " + errorThrown);
+                // Maneja errores de la solicitud AJAX
+                alert('Error al realizar la solicitud: ' + errorThrown);
             }
         });
-    }
-}
-/**
- * La función "eliminarDemandaCompletamente" envía una solicitud a un archivo PHP para eliminar una
- * demanda y actualiza un gráfico si la eliminación es exitosa.
- */
-function eliminarDemandaCompletamente() {
-    // Realizar una solicitud para eliminar la demanda completamente
-    $.ajax({
-        url: 'comprobarYEliminarDemanda.php', 
-        type: 'POST',
-        data: { nombre: selectedDemandName },
-        success: function(response) {
-            var data = JSON.parse(response);
-            if (data.success) {
-                actualizarGrafico();
-            } else {
-                alert("Error al eliminar la demanda: " + data.error);
-            }
-        },
-        error: function(xhr, status, errorThrown) {
-            alert("Error al intentar eliminar la demanda: " + errorThrown);
-        }
-    });
-}
+    };
+</script>
 
-
-/**
- * La función "anadirDemanda" envía una solicitud POST a "anadirDemanda.php" con el nombre de la
- * demanda seleccionada como datos y maneja las respuestas de éxito y error.
- */
-function anadirDemanda() {
-    if (selectedDemandName) {
-        $.ajax({
-            url: 'anadirDemanda.php',
-            type: 'POST',
-            dataType: 'json',
-            cache: false,
-            data: { nombre: selectedDemandName },
-            success: function(data) {
-                if(data.success) {
-                    handleDemandUpdate(selectedDemandName); 
-                    actualizarGrafico();
-                } else {
-                    alert("Error: " + data.error);
-                }
-            },
-            error: function(xhr, status, errorThrown) {
-                alert("Error al añadir demanda: " + errorThrown);
-            }
-        });
-    }
-}
-
-/**
- * La función `eliminarDemanda()` envía una solicitud AJAX a un archivo PHP para eliminar una demanda y
- * actualiza la visualización y el gráfico de la demanda en consecuencia.
- */
-function eliminarDemanda() {
-    if (selectedDemandName) {
-        $.ajax({
-            url: 'eliminarDemanda.php',
-            type: 'POST',
-            data: { nombre: selectedDemandName },
-            success: function(response) {
-                var data = JSON.parse(response);
-                if(data.success) {
-                    handleDemandUpdate(null); 
-                    actualizarGrafico();
-                } else {
-                    alert("Error: " + data.error);
-                }
-            },
-            error: function(xhr, status, errorThrown) {
-                alert("Error al eliminar demanda: " + errorThrown);
-            }
-        });
-    }
-}
-
-/**
- * La función vincula un evento de clic a un botón, que cuando se hace clic, llena un área de texto con
- * la descripción actual y muestra un modo para editar la descripción.
- */
-$('#btnEditarDescripcion').click(function() {
-    // Rellenar el textarea con la descripción actual
-    var descripcionActual = $('#textoDescripcion').text();
-    $('#editarTextoDescripcion').val(descripcionActual);
-
-    // Mostrar el modal de edición
-    $('#modalEditarDescripcion').show();
-});
-
-function cerrarModalEditar() {
-    $('#modalEditarDescripcion').hide();
-}
-
-/**
- * Este código es una función PHP que guarda una descripción editada enviando una solicitud AJAX a un
- * script PHP, actualizando la descripción en el modal y recargando un gráfico.
- */
-function guardarDescripcionEditada() {
-    var nuevaDescripcion = $('#editarTextoDescripcion').val();
-
-    $.ajax({
-        url: 'editar_desc_demanda.php', // Reemplazar con tu script de actualización
-        type: 'POST',
-        data: {
-            nombre: selectedDemandName,
-            nuevaDescripcion: nuevaDescripcion
-        },
-        success: function(response) {
-            // Actualizar la descripción en el modal original y recargar el gráfico
-            $('#textoDescripcion').text(nuevaDescripcion);
-            actualizarGrafico();
-            cerrarModalEditar();
-        },
-        error: function() {
-            alert('Error al guardar los cambios');
-        }
-    });
-}
-$(document).ready(function() {
-    $('#btnEditarDescripcion').click(function() {
-        var descripcionActual = $('#textoDescripcion').text();
-        $('#editarTextoDescripcion').val(descripcionActual);
-        $('#modalEditarDescripcion').show();
-    });
-});
-
-    </script>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Admin</title>
-    <link rel="stylesheet" href="assets/css/estilos_menu_admin.css">
-
-
-
-    <style>
-/* Este código   define los estilos CSS para un modal. El modal es una ventana emergente que se
-muestra en la parte superior de la página actual. Los estilos definen la apariencia y la posición
-del modal, incluido su tamaño, color de fondo, borde y botón de cierre. El modal se centra en la
-página usando la propiedad de transformación. El modal también tiene una sección de pie de página
-con un botón de cerrar. */
-        /* Estilo para el modal */
-        .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1000; 
-    left: 50%; 
-    top: 50%; 
-    width: 40%; 
-    height: 50%; 
-    overflow: auto; 
-    background-color: white; 
-    transform: translate(-50%, -50%); 
-}
-
-        .modal-contenido {
-            background-color: #fefefe;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 40%;
-        }
-
-        .cerrar {
-            color: #aaaaaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .cerrar:hover,
-        .cerrar:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        
-
-.modal-footer {
-  text-align: right;
-}
-
-.modal-close {
-  padding: 10px 20px;
-  background-color: #f44336;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-}
-
-.modal-close:hover {
-  background-color: #d32f2f;
-}
-    </style>
-
-
-
-</head>
-<!--- Este código   crea una página web con un gráfico de barras y botones. También incluye
-funcionalidad para agregar y eliminar demanda, mostrar y editar descripciones de demanda usando
-modales. ---->
-<body>
-    <div id="bar_chart" style="width: 100%; height: 500px;"></div>
-    <div id="buttons" style="display: none;">
-        <button onclick="quitarDemanda()">Quitar</button>
-        <button onclick="anadirDemanda()">Añadir</button>
-    </div>
-    <button id="btnAgregarDemanda">Agregar Demanda</button>
-    <!-- Botón que se muestra para ver la descripción de la demanda seleccionada -->
-    <button id="botonMostrarDescripcion" style="display: none;" onclick="mostrarDescripcion(selectedDemandName)">Mostrar Descripción</button>
-    <div id="modalDescripcion" class="modal" style="display:none;">
-    <div class="modal-content">
-        <h4>Descripción de la Demanda</h4>
-        <p id="textoDescripcion">Aquí va la descripción...</p>
-        <!-- Botón para editar la descripción -->
-        <button id="btnEditarDescripcion">Editar</button>
-    </div>
-    <div class="modal-footer">
-        <button onclick="cerrarModal()" class="modal-close">Cerrar</button>
-    </div>
-    <!-- Modal para Editar Descripción -->
-<div id="modalEditarDescripcion" class="modal" style="display:none;">
-    <div class="modal-content">
-        <h4>Editar Descripción de la Demanda</h4>
-        <textarea id="editarTextoDescripcion"></textarea>
-        <button onclick="guardarDescripcionEditada()">Guardar Cambios</button>
-    </div>
-    <div class="modal-footer">
-        <button onclick="cerrarModalEditar()" class="modal-close">Cerrar</button>
-    </div>
-</div>
-
-<script>
-/* Este código   implementa una funcionalidad modal en PHP. Crea un elemento modal con el id
-"miModal" y un elemento botón con el id "btnAgregarDemanda". Cuando se hace clic en el botón, se
-muestra el modal. Este código también incluye una funcionalidad para cerrar el modal cuando el usuario
-hace clic en el botón "x" o en cualquier lugar fuera del modal. */
-        // Obtener el modal
-var modal = document.getElementById("miModal");
-
-// Obtener el botón que abre el modal
-var btn = document.getElementById("btnAgregarDemanda");
-
-// Obtener el elemento <x> que cierra el modal
-var span = document.getElementsByClassName("cerrar")[0];
-
-// Cuando el usuario haga clic en el botón, abrir el modal 
-btn.onclick = function() {
-  modal.style.display = "block";
-}
-
-// Cuando el usuario haga clic en <x>, cerrar el modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
-
-// Cuando el usuario haga clic en cualquier lugar fuera del modal, cerrarlo
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
-}
-
-/* Este código   está escrito en PHP y JavaScript. Está manejando el envío de un formulario para
-agregar demandas. */
-// formulario para agregar demandas
-document.getElementById('formularioDemanda').onsubmit = function(event) {
-    event.preventDefault();
-
-    $.ajax({
-        url: 'guardarDemanda.php', 
-        type: 'POST',
-        data: $(this).serialize(), // Envía los datos del formulario
-        success: function(response) {
-
-            var data = JSON.parse(response);
-            if(data.success) {
-                alert('Demanda agregada correctamente');
-                actualizarGrafico();
-            } else {
-                alert('Error al agregar demanda: ' + data.error);
-            }
-        },
-        error: function(xhr, status, errorThrown) {
-            alert('Error al realizar la solicitud: ' + errorThrown);
-        }
-    });
-};
-
-
-    </script>
-    
 </body>
 
+<style>
+
+/* Estilos para el contenedor de botones */
+#buttonsContainer {
+    min-height: 50px; /* Altura mínima para mantener un espacio consistente */
+}
+
+/* Estilos para el modal */
+.modal {
+    display: none; /* Oculto por defecto para que se muestre solo cuando se activa */
+    position: fixed; /* Fijo en la pantalla para permanecer visible al desplazar */
+    z-index: 1000; /* Asegura que se muestre sobre otros elementos */
+    left: 50%;
+    top: 50%;
+    width: 40%; /* Ancho del modal como porcentaje de la ventana del navegador */
+    overflow: auto; /* Permite el desplazamiento si el contenido es más grande que el modal */
+    background-color: white;
+    transform: translate(-50%, -50%); /* Centra el modal en la pantalla */
+    border-radius: 5px; /* Bordes redondeados para una estética moderna */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Sombra para un efecto de profundidad */
+    max-height: 90vh; /* Limita la altura máxima del modal */
+    overflow-y: auto; /* Añade desplazamiento vertical si es necesario */
+}
+
+/* Estilos para el contenido del modal */
+.modal-contenido {
+    background-color: #fefefe;
+    margin: 5% auto; /* Centra el contenido verticalmente dentro del modal */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Controla el ancho del contenido dentro del modal */
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border-radius: 5px;
+    position: relative; /* Permite posicionar elementos absolutamente dentro */
+}
+
+/* Estilos para inputs, selects y textareas dentro del modal */
+.modal-contenido input[type="text"],
+.modal-contenido input[type="datetime-local"],
+.modal-contenido select,
+.modal-contenido textarea {
+    width: 90%; /* Ajusta el ancho a un poco menos que el contenedor para márgenes */
+    padding: 10px;
+    margin: 10px 0; /* Espaciado vertical para separar elementos */
+    border: 1px solid #ccc;
+    border-radius: 4px; /* Bordes redondeados para una mejor estética */
+}
+
+/* Estilos para los labels dentro del modal */
+.modal-contenido label {
+    display: block; /* Cada label en su propia línea */
+    margin-top: 10px; /* Espaciado antes del label */
+    margin-bottom: 5px; /* Espaciado después del label */
+}
+
+/* Estilos para el botón de 'Registrar Demanda' */
+.modal-contenido input[type="submit"] {
+    width: auto;
+    padding: 10px 20px;
+    margin-top: 15px;
+    background-color: #4CAF50; /* Color verde estándar para acciones positivas */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer; /* Indica que el botón es clickeable */
+}
+
+/* Cambios de estilo al pasar el mouse sobre el botón 'Registrar Demanda' */
+.modal-contenido input[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+/* Estilos para el botón de cerrar el modal */
+.cerrar {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Estilos al interactuar con el botón de cerrar */
+.cerrar:hover,
+.cerrar:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Estilos para el pie del modal */
+.modal-footer {
+    text-align: right;
+}
+
+/* Estilos para el botón de cierre en el pie del modal */
+.modal-close {
+    padding: 10px 20px;
+    background-color: #f44336; /* Color rojo para acciones de cierre o negativas */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Cambios de estilo al pasar el mouse sobre el botón de cierre */
+.modal-close:hover {
+    background-color: #d32f2f;
+}
+
+/* Estilos para el fondo detrás del modal */
+.modal-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparente para enfocar en el modal */
+    z-index: 998; /* Menor que el modal para que aparezca detrás */
+}
+
+
+/* ESTILOS DE HISTORIAL DE MOVIMIENTOS  */
+
+/* Estilos para el contenedor del gráfico de historial */
+#contenedorGraficoHistorial {
+    position: relative; /* Permite que los elementos absolutos dentro se posicionen relativo a este contenedor */
+}
+
+/**
+ * Estilos para el elemento que muestra el historial de movimientos.
+ *
+ * - El ancho se establece en 60% para proporcionar espacio suficiente para el contenido,
+ *   pero no ocupa el 100% del ancho disponible, para evitar un diseño que se extienda demasiado.
+ * - El margen superior de 20px separa visualmente este elemento de otros contenidos arriba,
+ *   y el 'auto' en los márgenes laterales centra horizontalmente el elemento en su contenedor.
+ * - Se evita el uso de 'position: absolute' a menos que sea estrictamente necesario, para mantener
+ *   un flujo de documento normal y prevenir problemas de posicionamiento.
+ */
+#historialMovimientos {
+    width: 60%;
+    margin: 20px auto 0 auto;
+}
+
+/**
+ * Estilos para el contenedor de botones.
+ *
+ * - Posicionado absolutamente en la parte inferior del contenedor de referencia,
+ *   lo que permite que este elemento se ubique de manera fija en relación con su contenedor padre.
+ * - El 'bottom' de 50px levanta el contenedor desde la parte inferior, creando espacio
+ *   para otros elementos como un botón de "Agregar Demanda".
+ * - El ancho se extiende al 100% para abarcar todo el ancho del contenedor padre.
+ * - El 'z-index' de 10 asegura que el contenedor se muestre por encima de otros elementos
+ *   en la misma área, como puede ser un gráfico.
+ */
+#buttonsContainer {
+    position: absolute;
+    bottom: 50px;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+}
+
+/**
+ * Estilos para el botón 'Agregar Demanda'.
+ *
+ * - 'Position: fixed' mantiene el botón en una posición fija en la pantalla,
+ *   lo que significa que permanecerá en el mismo lugar incluso si el usuario desplaza la página.
+ * - Colocado específicamente en la parte inferior derecha de la pantalla con 'bottom' de 10px
+ *   y 'right' de 20px, para ser fácilmente accesible pero sin obstruir otros elementos.
+ */
+#btnAgregarDemanda {
+    position: fixed;
+    bottom: 10px;
+    right: 20px;
+}
+
+
+
+</style>
 </html>

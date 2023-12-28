@@ -22,8 +22,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($resultado = mysqli_query($con, $query)) {
             // Chequeo si se actualizó algún registro.
             if (mysqli_affected_rows($con) > 0) {
+                // Obtengo la cantidad actualizada para devolverla.
+                $queryCantidad = "SELECT cantidad FROM demanda WHERE nombre = '$nombre'";
+                $resultadoCantidad = mysqli_query($con, $queryCantidad);
+                $fila = mysqli_fetch_assoc($resultadoCantidad);
+                
                 // Respondo con éxito si se actualizó la cantidad.
-                echo json_encode(['success' => 'Cantidad de demanda incrementada en uno']);
+                echo json_encode([
+                    'success' => true,
+                    'cantidad' => 1, // Asumiendo que siempre añades 1
+                    'nuevaCantidad' => $fila['cantidad'], // La cantidad actualizada
+                    'nombre' => $nombre // El nombre para mostrar en el historial
+                ]);
             } else {
                 // Respondo con error si no se encontró el registro.
                 echo json_encode(['error' => 'No se encontró la demanda con ese nombre o ya está en la cantidad máxima']);

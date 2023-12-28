@@ -9,25 +9,68 @@
 </head>
 <body>
 <script>
+    /**
+ * Función que se ejecuta cuando el contenido del documento se ha cargado.
+ * Llama a la función 'buscarProducto' para cargar la tabla inicialmente.
+ *
+ * @returns {void}
+ */
         document.addEventListener('DOMContentLoaded', function() {
             buscarProducto(); // Llama a esta función para cargar la tabla inicialmente
         });
     </script>
 <header>
-    Productos
+    <!-- en esta parte se añadieron consultas para saber que deberia mostrar la pestaña getproductos dependiendo del usuario que alla inciado sesion
+ -->
+    <?php
+    session_start();
+
+    // Verificar si el usuario está logueado y tiene un rol asignado
+    if (!isset($_SESSION['role_name'])) {
+        header('Location: login.php'); // Redireccionar al login si no está logueado
+        exit();
+    }
+
+    $rolUsuario = $_SESSION['role_name']; // Obtener el rol del usuario
+    ?>
+
     <header>
-        <a href="menu_admin.php"><button>Menú Admin</button></a>
+    
+    <!-- Menú dinámico según el rol -->
+    <?php if ($rolUsuario == 'admin'): ?>
+      <h3>Productos</h3>
+      </h3>
+        <a href="menu_admin.php"><button>Menú</button></a>
         <a href="getProductos.php"><button>Productos</button></a>
         <a href="getDemandas.php"><button>Demandas</button></a>
         <a href="getHistorial.php"><button>Historial</button></a>
         <a href="getEmpleados.php"><button>Empleados</button></a>
+    <?php elseif ($rolUsuario == 'empleado'): ?>
+      <h3>Venfarma
+        Empleado</h3>
+      </h3>
+        <a href="menu_admin.php"><button>Menú</button></a>
+        <a href="getProductos.php"><button>Productos</button></a>
+        <a href="getDemandas.php"><button>Demandas</button></a>
+        <a href="getHistorial.php"><button>Historial</button></a>
+    <?php elseif ($rolUsuario == 'encargado'): ?>
+      <h3>Venfarma
+        Reabastecimientos</h3>
+      </h3>
+      <a href="menu_admin.php"><button>Menú</button></a>
+        <a href="getProductos.php"><button>Productos</button></a>
+        <a href="getDemandas.php"><button>Demandas</button></a>
+        <a href="getHistorial.php"><button>Historial</button></a>
+    <?php else: ?>
+        <p>Rol no reconocido.</p>
+    <?php endif; ?>
     </header>
 </header>
 <div>
     <h1> </h1>
 </div>
 
-<form action="buscar_producto.php" method="GET">
+<form action="buscarProducto.php" method="GET">
     <!-- Campo de entrada para el término de búsqueda -->
     <label for="terminoBusqueda">Buscar Producto:</label>
     <input type="text" id="terminoBusqueda" onkeyup="buscarProducto()" placeholder="Buscar producto...">
@@ -43,7 +86,7 @@
         <option value="familia">Familia</option>
         <option value="tipo">Tipo</option>
     </select>
-    <button type="button" onclick="ordenarProductos()">Ordenar</button>
+    
 
 </form>
 
@@ -62,6 +105,12 @@ document.addEventListener('DOMContentLoaded', function() {
     loadAllPromotions();
 });
 
+/**
+ * Carga todas las promociones desde un servidor y almacena los datos en la variable 'allPromotions'.
+ * También imprime los datos en la consola para verificación.
+ *
+ * @returns {void}
+ */
 function loadAllPromotions() {
     fetch('get_promotions.php')
         .then(response => response.json())
@@ -77,6 +126,11 @@ function loadAllPromotions() {
 <!-- obtener los datos de cada opcion en el menu desplegable --------------------------------------------------------> 
 
     <script>
+        /**
+ * Carga opciones de categorías desde un servidor y las agrega a un select en el formulario.
+ *
+ * @returns {void}
+ */
         // AJAX para obtener las categorías y cargarlas en el menú desplegable
         fetch('get_categories.php')
             .then(response => response.json())
@@ -98,6 +152,11 @@ function loadAllPromotions() {
             .catch(error => console.error('Error:', error));
     </script>
     <script>
+        /**
+ * Carga opciones de familias desde un servidor y las agrega a un select en el formulario.
+ *
+ * @returns {void}
+ */
     fetch('get_families.php')
         .then(response => response.json())
         .then(families => {
@@ -118,6 +177,11 @@ function loadAllPromotions() {
         .catch(error => console.error('Error:', error));
 </script>
 <script>
+    /**
+ * Carga opciones de tipos desde un servidor y las agrega a un select en el formulario.
+ *
+ * @returns {void}
+ */
     fetch('get_types.php')
         .then(response => response.json())
         .then(types => {
@@ -332,28 +396,41 @@ function loadAllPromotions() {
 <!----------------------------------------------------------------Editar-------------------------------------------------------->
 
 <script>
+    /**
+ * La función selectPromotionForEdit() se utiliza para abrir el modal de edición de promoción y establecer el modo a "editar".
+    */
+
 function selectPromotionForEdit() {
     openPromotionModalForEdit();
     window.isEditMode = true; // Establece el modo a "editar"
 }
 
-    
+    /**
+ * La función openEditModal(idProducto) se utiliza para abrir el modal de edición de producto y cargar los datos del producto.
+ */
     function openEditModal(idProducto) {
     document.getElementById("editProductModal").style.display = "block";
     loadProductData(idProducto); 
 }
 
-
+/**
+ * La función closeEditModal() se utiliza para cerrar el modal de edición de producto.
+ */
 function closeEditModal() {
     document.getElementById('editProductModal').style.display = "none";
 }
+/**
+ * La función openPromotionModalForEdit() se utiliza para obtener las promociones de la base de datos y construir una tabla para editar, y luego abrir el modal de edición de promoción.
+ */
 function openPromotionModalForEdit() {
     fetchPromotionsFromDatabase().then(buildTableForEdit).catch(handleError);
     document.getElementById('promotionModalEdit').style.display = 'block';
 }
 
 
-
+/**
+ * La función submitEditProductForm() se utiliza para obtener los datos del formulario de edición de producto, enviar los datos al servidor para actualizar el producto y mostrar un mensaje de confirmación o error.
+ */
 function submitEditProductForm() {
     var form = document.getElementById('editProductForm');
     var formData = new FormData(form);
@@ -388,7 +465,10 @@ document.getElementById('editProductForm').addEventListener('submit', function(e
 
 
 
-// Actualiza el modal de seleccionar un promocion en la Base de datos
+/**
+ * La función "selectPromotion" se utiliza para seleccionar una promoción y llenar un formulario con los datos correspondientes.
+ *  Si la promoción está asociada a algún producto, se muestra un aviso de advertencia antes de editarla.
+ */
 
 function selectPromotion(id, isEditMode = false) {
     var promotion = allPromotions.find(promo => promo.idpromocion == id);
@@ -431,17 +511,24 @@ function updatePromotionNameDisplayEdit(promocionId) {
 
 
 // Función que carga la vista de producto en la base de
+/**
+ * Carga los datos de un producto y los muestra en un formulario de edición.
+ *
+ * @param {number} productId - El ID del producto cuyos datos se cargarán.
+ * @returns {void}
+ */
 function loadProductData(productId) {
     fetch('editar_producto.php?id=' + productId)
         .then(response => response.json())
         .then(productData => {
+            // Asigna los valores de los datos del producto a los campos del formulario de edición
             document.querySelector('#editProductModal input[name="nombre"]').value = productData.nombre;
             document.querySelector('#editProductModal input[name="stock"]').value = productData.stock;
             document.querySelector('#editProductModal input[name="precio"]').value = productData.precio;
             document.querySelector('#editProductModal select[name="estado"]').value = productData.estado;
             document.querySelector('#editProductModal input[name="idProducto"]').value = productId;
 
-            // Actualizar la promoción seleccionada
+            // Actualiza la visualización de la promoción seleccionada en el formulario de edición
             updatePromotionNameDisplayEdit(productData.promocion_idpromocion);
         })
         .catch(error => {
@@ -449,6 +536,7 @@ function loadProductData(productId) {
             alert('Error al cargar los datos del producto.');
         });
 }
+
 </script>
 
 
@@ -541,7 +629,6 @@ function submitAddProductForm() {
         alert('Ocurrió un error al añadir el producto.');
     });
 }
-
 
 /*El código anterior está escrito en JavaScript, no en PHP. Está agregando un detector de eventos al formulario con
 la identificación "addProductForm". Cuando se envía el formulario, el detector de eventos evitará que el formulario
@@ -705,26 +792,85 @@ function getPromotionDataById(id) {
 
 
 
+
+
+
+
+
+
 /**
- *La función "editarPromoción" recupera datos de promoción por ID y llena un formulario con los datos.
- *
- *@no devolver nada.
+ *La función "editarPromoción" recupera datos de promoción por ID y llena un formulario con los datos. Tambien se añadio una función que permite identificar
+ si la promocion esta asociada a algun producto y que antes de editarla, muestre un aviso de advertencia
  */
-function editPromotion(id) {
+async function editPromotion(id) {
     var promotionData = getPromotionDataById(id);
     if (!promotionData) {
         console.error('Promoción no encontrada con ID:', id);
         return;
     }
-    // Rellena el formulario con los datos de la promoción
+
+    try {
+        const associatedProducts = await getProductsByPromotionId(id);
+        // Solo muestra el mensaje si hay productos asociados
+        if (associatedProducts.length > 0) {
+            const productNames = associatedProducts.map(p => p.nombre).join(', ');
+            const confirmEdit = confirm(`Usted está intentando editar una promoción que está asociada a los siguientes productos: ${productNames}. ¿Desea continuar?`);
+            if (confirmEdit) {
+                showEditForm(promotionData);
+            }
+        } else {
+            
+            showEditForm(promotionData);
+        }
+    } catch (error) {
+        alert('Hubo un error al obtener los productos asociados.');
+        
+        showEditForm(promotionData);
+    }
+}
+
+/**
+ * Muestra un formulario de edición con los datos de una promoción.
+ *
+ * @param {Object} promotionData - Los datos de la promoción a editar.
+ * @returns {void}
+ */
+function showEditForm(promotionData) {
+    // Asigna los valores de los datos de la promoción a los campos del formulario de edición
     document.getElementById('editIdPromocion').value = promotionData.idpromocion;
     document.getElementById('editNombre').value = promotionData.nombre;
     document.getElementById('editEstado').value = promotionData.estado;
     document.getElementById('editDescuento').value = promotionData.descuento;
     document.getElementById('editFechaInicio').value = promotionData.fecha_inicio;
     document.getElementById('editFechaFinal').value = promotionData.fecha_final;
+    
+    // Muestra el formulario de edición en la interfaz
     document.getElementById('editPromotionModal').style.display = 'block';
 }
+
+
+/**
+ * Obtiene productos por su ID de promoción a través de una solicitud HTTP.
+ *
+ * @param {number} promotionId - El ID de la promoción para la cual se obtienen los productos.
+ * @returns {Promise<Array>} - Una promesa que resuelve en una matriz de productos obtenidos o en una matriz vacía en caso de error.
+ */
+function getProductsByPromotionId(promotionId) {
+    return fetch(`obtenerPromociones.php?promotionId=${promotionId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                return data.products; 
+            } else {
+                throw new Error(data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener productos:', error);
+            return [];
+        });
+}
+
 
 /**
  *La función recargarListaProductos recupera datos de listarProductos.php, los convierte a JSON
@@ -1278,64 +1424,23 @@ function construirTablaProductos(productos) {
 }
 
 
-function ordenarProductos() {
-    var criterio = document.getElementById('criterioBusqueda').value;
-    buscarProducto(); // Esta función debería actualizar la tabla de productos según el término de búsqueda.
-    // Luego ordenamos los productos según el criterio
-    ordenarTabla(criterio);
-}
 
-function ordenarTabla(criterio) {
-    var productos = obtenerProductosDesdeTabla();
-    var esDescendente = false; // Puedes alternar esto según necesites cambiar el orden de clasificación
 
-    productos.sort((a, b) => {
-        var valorA = a[criterio];
-        var valorB = b[criterio];
 
-        if (!isNaN(parseFloat(valorA)) && !isNaN(parseFloat(valorB))) {
-            // Orden numérico
-            return esDescendente ? valorB - valorA : valorA - valorB;
-        } else {
-            // Orden alfabético
-            valorA = valorA ? valorA.toString().toLowerCase() : '';
-            valorB = valorB ? valorB.toString().toLowerCase() : '';
-            if (valorA < valorB) return esDescendente ? 1 : -1;
-            if (valorA > valorB) return esDescendente ? -1 : 1;
-            return 0;
-        }
-    });
-
-    // Luego debes actualizar la tabla con la nueva lista ordenada de productos
-    actualizarTablaProductos(productos);
-}
-
-function obtenerProductosDesdeTabla() {
-    // Esta función debería extraer los productos desde la tabla HTML y convertirlos en un array de objetos
-    var tablaProductos = document.getElementById('tablaProductos');
-    var filas = tablaProductos.getElementsByTagName('tr');
-    var productos = [];
-
-    for (var i = 1; i < filas.length; i++) { // Comenzamos en 1 para saltarnos la cabecera de la tabla
-        var celdas = filas[i].getElementsByTagName('td');
-        var producto = {
-            idProducto: celdas[0].innerText,
-            nombre: celdas[1].innerText,
-            // ... y así con el resto de las celdas y sus correspondientes propiedades
-        };
-        productos.push(producto);
-    }
-
-    return productos;
-}
-
+/**
+ * Actualiza la tabla de productos en la interfaz.
+ *
+ * @param {Array} productos - La lista de productos para mostrar en la tabla.
+ * @returns {void}
+ */
 function actualizarTablaProductos(productos) {
-    // Limpia la tabla y construye de nuevo con los productos ordenados
+    // Limpia la tabla y la reconstruye con los productos ordenados
     var tablaProductosDiv = document.getElementById('tablaProductos');
-    tablaProductosDiv.innerHTML = ''; 
+    tablaProductosDiv.innerHTML = '';
     var html = construirTablaProductos(productos);
     tablaProductosDiv.innerHTML = html;
 }
+
 
 
 /**
@@ -1384,6 +1489,7 @@ function toggleActiveProducts() {
 /*El código anterior está escrito en JavaScript y agrega un detector de eventos a un formulario con la identificación
 "añadirCategoríaForm". Cuando se envía el formulario, evita el comportamiento de envío de formulario predeterminado.
 Luego crea un nuevo objeto FormData a partir de los datos del formulario.*/
+
     document.getElementById("addCategoryForm").addEventListener("submit", function(event){
     event.preventDefault();
     
@@ -1407,6 +1513,7 @@ Luego crea un nuevo objeto FormData a partir de los datos del formulario.*/
 /*El código anterior está escrito en JavaScript y agrega un detector de eventos a un formulario con la identificación
 "agregar formulario familiar". Cuando se envía el formulario, evita el comportamiento de envío de formulario predeterminado. Él
 luego crea un nuevo objeto FormData a partir de los datos del formulario.*/
+
 document.getElementById("addFamilyForm").addEventListener("submit", function(event) {
     event.preventDefault();
 
@@ -1425,10 +1532,12 @@ document.getElementById("addFamilyForm").addEventListener("submit", function(eve
         alert('Error al añadir familia: ' + error);
     });
 });
+
 //parte de tipo --------------------------------------------------------------------------------------------------------------------------------
 /*El código anterior está escrito en JavaScript y agrega un detector de eventos a un formulario con la identificación
 "añadirTypeForm". Cuando se envía el formulario, evita el comportamiento de envío de formulario predeterminado. entonces
 Crea un nuevo objeto FormData a partir de los datos del formulario.*/
+
 document.getElementById("addTypeForm").addEventListener("submit", function(event) {
     event.preventDefault();
 
@@ -1451,6 +1560,7 @@ document.getElementById("addTypeForm").addEventListener("submit", function(event
 
 /*El código anterior está escrito en JavaScript y utiliza el evento DOMContentLoaded para ejecutar una
 funcion cuando el documento HTML haya terminado de cargarse. */
+
 document.addEventListener('DOMContentLoaded', function () {
     // Cargar las promociones al cargar la página
    
